@@ -15,7 +15,7 @@ import com.gentleai.colorrush.data.local.db.entity.RankingEntryEntity
 @Database(
     entities = [RankingEntryEntity::class],
     version = 1,
-    exportSchema = true,
+    exportSchema = false,
 )
 abstract class AppDatabase : RoomDatabase() {
 
