@@ -1,0 +1,54 @@
+name: Android CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          tags: color-rush-builder:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Run unit tests
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}:/project" \
+            -v gradle-cache:/gradle-cache \
+            -e GRADLE_USER_HOME=/gradle-cache \
+            color-rush-builder:ci \
+            ./gradlew test
+
+      - name: Assemble debug APK
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}:/project" \
+            -v gradle-cache:/gradle-cache \
+            -e GRADLE_USER_HOME=/gradle-cache \
+            color-rush-builder:ci \
+            ./gradlew assembleDebug
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: color-rush-apk-${{ github.sha }}
+          path: app/build/outputs/apk/debug/*.apk
+          retention-days: 30
+          if-no-files-found: error
