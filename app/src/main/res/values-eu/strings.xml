@@ -16,5 +16,5 @@
     <string name="play_again">Berriro Jolastu</string>
     <string name="main_menu">Menu Nagusia</string>
     <string name="game_placeholder">Jokoa laster iritsiko da!</string>
-    <string name="simulate_game_over">Simulatu joko amaiera</string>
+    <string name="game_score">Puntuazioa: %d</string>
 </resources>

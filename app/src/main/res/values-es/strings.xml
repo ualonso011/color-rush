@@ -16,5 +16,5 @@
     <string name="play_again">Jugar de Nuevo</string>
     <string name="main_menu">Menú Principal</string>
     <string name="game_placeholder">¡El juego llegará pronto!</string>
-    <string name="simulate_game_over">Simular fin de juego</string>
+    <string name="game_score">Puntuación: %d</string>
 </resources>

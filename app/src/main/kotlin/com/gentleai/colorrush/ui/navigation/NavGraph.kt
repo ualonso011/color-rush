@@ -1,25 +1,12 @@
 package com.gentleai.colorrush.ui.navigation
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.gentleai.colorrush.ui.game.GameScreen
 import com.gentleai.colorrush.ui.gameover.GameOverScreen
 import com.gentleai.colorrush.ui.main.MainScreen
 
@@ -38,10 +25,10 @@ object Routes {
 /**
  * Root composable that sets up the [NavHost] with all three screens.
  *
- * Current routes:
- * - [MAIN] → [MainScreen]
- * - [GAME] → Placeholder (will be replaced by [GameScreen] in Phase 5)
- * - [GAME_OVER/{score}] → [GameOverScreen] (gets score via SavedStateHandle)
+ * Routes:
+ * - [MAIN] → [MainScreen] (language selector, play button, rankings)
+ * - [GAME] → [GameScreen] (3×3 grid, timer, score display)
+ * - [GAME_OVER/{score}] → [GameOverScreen] (name entry, score persistence)
  *
  * @param navController The [NavHostController] driving navigation.
  */
@@ -62,11 +49,13 @@ fun ColorRushNavGraph(
             )
         }
 
-        // ── Game screen (placeholder until Phase 5) ──────────────────────
+        // ── Game screen ───────────────────────────────────────────────────
         composable(Routes.GAME) {
-            GamePlaceholderScreen(
-                onSimulateGameOver = { score ->
-                    navController.navigate(Routes.gameOver(score))
+            GameScreen(
+                onGameOver = { score ->
+                    navController.navigate(Routes.gameOver(score)) {
+                        popUpTo(Routes.GAME) { inclusive = true }
+                    }
                 },
                 onBackToMain = {
                     navController.popBackStack(Routes.MAIN, inclusive = false)
@@ -94,52 +83,6 @@ fun ColorRushNavGraph(
                         popUpTo(Routes.MAIN) { inclusive = true }
                     }
                 },
-            )
-        }
-    }
-}
-
-/**
- * Placeholder game screen shown until the real [GameScreen] is implemented
- * in Phase 5. Allows testing the full navigation flow by simulating a game-over.
- */
-@Composable
-private fun GamePlaceholderScreen(
-    onSimulateGameOver: (Int) -> Unit,
-    onBackToMain: () -> Unit,
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        Text(
-            text = androidx.compose.ui.res.stringResource(
-                com.gentleai.colorrush.R.string.game_placeholder
-            ),
-            style = MaterialTheme.typography.headlineMedium,
-            textAlign = TextAlign.Center,
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Button(onClick = { onSimulateGameOver(25) }) {
-            Text(
-                text = androidx.compose.ui.res.stringResource(
-                    com.gentleai.colorrush.R.string.simulate_game_over
-                ),
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(onClick = onBackToMain) {
-            Text(
-                text = androidx.compose.ui.res.stringResource(
-                    com.gentleai.colorrush.R.string.main_menu
-                ),
             )
         }
     }
