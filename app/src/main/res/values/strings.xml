@@ -16,5 +16,5 @@
     <string name="play_again">Play Again</string>
     <string name="main_menu">Main Menu</string>
     <string name="game_placeholder">Game screen coming soon!</string>
-    <string name="simulate_game_over">Simulate Game Over</string>
+    <string name="game_score">Score: %d</string>
 </resources>
