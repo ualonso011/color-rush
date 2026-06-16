@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Spanish strings -->
 <resources>
-    <string name="app_name">ColorRush</string>
+    <string name="app_name">ColorRush v2</string>
     <string name="play">Jugar</string>
     <string name="version">Versión %s</string>
     <string name="language_eu">Euskara</string>

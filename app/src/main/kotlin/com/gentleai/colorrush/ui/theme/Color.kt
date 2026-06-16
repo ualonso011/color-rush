@@ -6,7 +6,7 @@ import androidx.compose.ui.graphics.Color
 val CellGreen = Color(0xFF4CAF50)
 val CellRed = Color(0xFFF44336)
 val CellYellow = Color(0xFFFFEB3B)
-val CellGray = Color(0xFF9E9E9E)
+val CellGray = Color(0xFF424242) // Dark gray for inactive cells
 
 // Light theme palette — ColorRush game colors
 val PrimaryLight = Color(0xFF7C4DFF) // Deep purple — main brand
