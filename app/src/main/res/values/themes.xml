@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Scaffold placeholder theme — replaced with Material 3 ColorScheme at runtime.
+     Uses Theme.AppCompat.DayNight.NoActionBar as the XML base since we use Compose for all UI.
+     Material 3 theming is applied programmatically via MaterialTheme composable. -->
+<resources>
+    <style name="Theme.ColorRush" parent="Theme.AppCompat.DayNight.NoActionBar" />
+</resources>

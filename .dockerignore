@@ -1,0 +1,11 @@
+# Build outputs — not needed in Docker build context (mounted at runtime)
+.gradle/
+app/build/
+build/
+
+# IDE files
+.idea/
+*.iml
+
+# OS files
+.DS_Store

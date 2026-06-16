@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      # Project source (read-write so Gradle can write build outputs)
+      - .:/project
+      # Persistent Gradle cache — avoids re-downloading dependencies on every run
+      - gradle-cache:/gradle-cache
+    working_dir: /project
+    # Default command: build debug APK.
+    # Override with: docker-compose run --rm app ./gradlew <task>
+    command: ./gradlew assembleDebug
+    environment:
+      # CI signing env vars — these are set in GitHub Actions secrets.
+      # Locally they are absent; debug signing is used automatically.
+      - KEYSTORE_BASE64
+      - KEYSTORE_PASSWORD
+      - KEY_ALIAS
+      - KEY_PASSWORD
+
+volumes:
+  gradle-cache:
