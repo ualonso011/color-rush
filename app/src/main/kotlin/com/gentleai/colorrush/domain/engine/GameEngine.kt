@@ -29,7 +29,7 @@ import javax.inject.Inject
  * - Tapping a colored cell scores points and returns it to GRAY.
  * - Color spawn probabilities: Green 45%, Red 35%, Yellow 20%.
  */
-class GameEngine @Inject constructor(
+class GameEngine(
     private val colorSpawner: ColorSpawner,
 ) {
     // ── Constants ──────────────────────────────────────────────────────────
