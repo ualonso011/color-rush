@@ -61,9 +61,8 @@ android {
         buildConfig = true
     }
 
-    // Room schema export — exports canonical JSON to app/schemas/ for migration tracking
+    // Room configuration
     ksp {
-        arg("room.schemaLocation", "$projectDir/schemas")
         arg("room.incremental", "true")
     }
 
