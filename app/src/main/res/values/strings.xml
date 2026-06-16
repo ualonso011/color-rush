@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- English strings — fallback locale -->
+<!-- Basque strings — default fallback locale -->
 <resources>
     <string name="app_name">ColorRush</string>
-    <string name="play">Play</string>
-    <string name="version">Version %s</string>
+    <string name="play">Jolastu</string>
+    <string name="version">Bertsioa %s</string>
     <string name="language_eu">Euskara</string>
     <string name="language_es">Español</string>
     <string name="language_en">English</string>
-    <string name="ranking_title">Top 10 Rankings</string>
-    <string name="no_rankings">No scores yet. Be the first!</string>
-    <string name="game_over_title">Game Over!</string>
-    <string name="final_score">Score: %d</string>
-    <string name="name_hint">Enter your name</string>
-    <string name="save_button">Save Score</string>
-    <string name="play_again">Play Again</string>
-    <string name="main_menu">Main Menu</string>
-    <string name="game_placeholder">Game screen coming soon!</string>
-    <string name="game_score">Score: %d</string>
+    <string name="ranking_title">Sailkapena (Top 10)</string>
+    <string name="no_rankings">Oraindik ez dago puntuaziorik. Izan zaitez lehena!</string>
+    <string name="game_over_title">Jokoa Bukatu Da!</string>
+    <string name="final_score">Puntuazioa: %d</string>
+    <string name="name_hint">Idatzi zure izena</string>
+    <string name="save_button">Gorde Puntuazioa</string>
+    <string name="play_again">Berriro Jolastu</string>
+    <string name="main_menu">Menu Nagusia</string>
+    <string name="game_placeholder">Jokoa laster iritsiko da!</string>
+    <string name="game_score">Puntuazioa: %d</string>
 </resources>
