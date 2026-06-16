@@ -2,6 +2,8 @@ package com.gentleai.colorrush.domain.engine
 
 import com.gentleai.colorrush.domain.model.CellColor
 import kotlin.random.Random
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * Weighted random color spawner for the game grid.
@@ -13,7 +15,8 @@ import kotlin.random.Random
  * @param redProbability    Probability of spawning [CellColor.RED]     (default 0.35).
  * @param yellowProbability Probability of spawning [CellColor.YELLOW] (default 0.20).
  */
-class ColorSpawner(
+@Singleton
+class ColorSpawner @Inject constructor(
     val greenProbability: Float = DEFAULT_GREEN_PROBABILITY,
     val redProbability: Float = DEFAULT_RED_PROBABILITY,
     val yellowProbability: Float = DEFAULT_YELLOW_PROBABILITY,
