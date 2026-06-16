@@ -2,4 +2,19 @@
 <!-- Spanish strings -->
 <resources>
     <string name="app_name">ColorRush</string>
+    <string name="play">Jugar</string>
+    <string name="version">Versión %s</string>
+    <string name="language_eu">Euskara</string>
+    <string name="language_es">Español</string>
+    <string name="language_en">English</string>
+    <string name="ranking_title">Ranking (Top 10)</string>
+    <string name="no_rankings">Aún no hay puntuaciones. ¡Sé el primero!</string>
+    <string name="game_over_title">¡Juego Terminado!</string>
+    <string name="final_score">Puntuación: %d</string>
+    <string name="name_hint">Escribe tu nombre</string>
+    <string name="save_button">Guardar Puntuación</string>
+    <string name="play_again">Jugar de Nuevo</string>
+    <string name="main_menu">Menú Principal</string>
+    <string name="game_placeholder">¡El juego llegará pronto!</string>
+    <string name="simulate_game_over">Simular fin de juego</string>
 </resources>

@@ -2,4 +2,19 @@
 <!-- Basque strings — primary locale (default app language) -->
 <resources>
     <string name="app_name">ColorRush</string>
+    <string name="play">Jolastu</string>
+    <string name="version">Bertsioa %s</string>
+    <string name="language_eu">Euskara</string>
+    <string name="language_es">Español</string>
+    <string name="language_en">English</string>
+    <string name="ranking_title">Sailkapena (Top 10)</string>
+    <string name="no_rankings">Oraindik ez dago puntuaziorik. Izan zaitez lehena!</string>
+    <string name="game_over_title">Jokoa Bukatu Da!</string>
+    <string name="final_score">Puntuazioa: %d</string>
+    <string name="name_hint">Idatzi zure izena</string>
+    <string name="save_button">Gorde Puntuazioa</string>
+    <string name="play_again">Berriro Jolastu</string>
+    <string name="main_menu">Menu Nagusia</string>
+    <string name="game_placeholder">Jokoa laster iritsiko da!</string>
+    <string name="simulate_game_over">Simulatu joko amaiera</string>
 </resources>
