@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
 /**
  * Pure Kotlin game engine — no Android dependencies.
@@ -23,7 +24,7 @@ import kotlinx.coroutines.flow.update
  * (e.g. `viewModelScope`), allowing virtual time advancement with `StandardTestDispatcher`
  * during unit tests.
  */
-class GameEngine(
+class GameEngine @Inject constructor(
     private val colorSpawner: ColorSpawner,
 ) {
     // ── Constants ──────────────────────────────────────────────────────────
