@@ -11,7 +11,7 @@ package com.gentleai.colorrush.domain.model
  */
 data class GameState(
     val phase: GamePhase = GamePhase.MENU,
-    val grid: List<CellState> = emptyList(),
+    val grid: List<CellState> = List(9) { CellState(it, CellColor.GRAY) },
     val score: Int = 0,
     val timeRemaining: Float = 30f,
     val totalTime: Float = 30f,

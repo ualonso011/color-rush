@@ -7,8 +7,9 @@ import com.gentleai.colorrush.domain.engine.GameEngine.Companion.TICK_INTERVAL_M
 import com.gentleai.colorrush.domain.engine.GameEngine.Companion.TICK_TIME_DECREMENT
 import com.gentleai.colorrush.domain.engine.GameEngine.Companion.YELLOW_TIME_BONUS
 import com.gentleai.colorrush.domain.model.CellColor
+import com.gentleai.colorrush.domain.model.CellState
 import com.gentleai.colorrush.domain.model.GamePhase
-import kotlinx.coroutines.flow.first
+import com.gentleai.colorrush.domain.model.GameState
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
@@ -59,6 +60,27 @@ class GameEngineTest {
         engine = GameEngine(greenSpawner)
     }
 
+    /**
+     * Helper to manually set a cell to a specific color for testing.
+     * This bypasses the spawn system to allow deterministic scoring tests.
+     */
+    private fun GameEngine.setCellColor(index: Int, color: CellColor) {
+        val current = state.value
+        val newGrid = current.grid.map { cell ->
+            if (cell.index == index) {
+                CellState(index, color, 0L, 5000L) // 5 second lifetime
+            } else {
+                cell
+            }
+        }
+        // Use reflection or direct state manipulation - for tests only
+        val field = GameEngine::class.java.getDeclaredField("_state")
+        field.isAccessible = true
+        @Suppress("UNCHECKED_CAST")
+        val stateFlow = field.get(this) as kotlinx.coroutines.flow.MutableStateFlow<GameState>
+        stateFlow.value = current.copy(grid = newGrid)
+    }
+
     // ── startGame() ─────────────────────────────────────────────────────────
 
     @Nested
@@ -89,11 +111,11 @@ class GameEngineTest {
         }
 
         @Test
-        fun `startGame grid cells all have valid colors`() = testScope.runTest {
+        fun `startGame grid cells all start as GRAY`() = testScope.runTest {
             engine.startGame()
             engine.state.value.grid.forEach { cell ->
-                assertNotEquals(CellColor.GRAY, cell.color) {
-                    "No cell should be GRAY at game start, got index=${cell.index}"
+                assertEquals(CellColor.GRAY, cell.color) {
+                    "All cells should be GRAY at game start, got index=${cell.index}"
                 }
             }
         }
@@ -108,27 +130,41 @@ class GameEngineTest {
         fun `tapping GREEN adds 1 point`() = testScope.runTest {
             val engine = GameEngine(greenSpawner)
             engine.startGame()
+            engine.setCellColor(0, CellColor.GREEN)
             val result = engine.tapCell(0)
             assertEquals(1, engine.state.value.score)
             assertEquals(TapResult.Scored(1, 0f), result)
         }
 
         @Test
+        fun `tapping GREEN returns cell to GRAY`() = testScope.runTest {
+            val engine = GameEngine(greenSpawner)
+            engine.startGame()
+            engine.setCellColor(0, CellColor.GREEN)
+            engine.tapCell(0)
+            assertEquals(CellColor.GRAY, engine.state.value.grid[0].color)
+        }
+
+        @Test
         fun `tapping RED subtracts 1 point`() = testScope.runTest {
             val engine = GameEngine(redSpawner)
             engine.startGame()
-            // Start with score 5 by tapping green first
-            val greenEngine = GameEngine(greenSpawner)
-            greenEngine.startGame()
-            greenEngine.tapCell(0) // score = 1
-            greenEngine.tapCell(0) // score = 2
-            greenEngine.tapCell(0) // score = 3
-            greenEngine.tapCell(0) // score = 4
-            greenEngine.tapCell(0) // score = 5
+            // First add some points
+            engine.setCellColor(0, CellColor.GREEN)
+            engine.tapCell(0) // score = 1
+            engine.setCellColor(1, CellColor.GREEN)
+            engine.tapCell(1) // score = 2
+            engine.setCellColor(2, CellColor.GREEN)
+            engine.tapCell(2) // score = 3
+            engine.setCellColor(3, CellColor.GREEN)
+            engine.tapCell(3) // score = 4
+            engine.setCellColor(4, CellColor.GREEN)
+            engine.tapCell(4) // score = 5
 
-            // Now test RED scoring directly by checking TapResult
-            val result = engine.tapCell(0)
-            assertInstanceOf(TapResult.Scored::class.java, result)
+            // Now test RED scoring
+            engine.setCellColor(5, CellColor.RED)
+            val result = engine.tapCell(5)
+            assertEquals(4, engine.state.value.score)
             assertEquals(-1, (result as TapResult.Scored).points)
         }
 
@@ -136,6 +172,7 @@ class GameEngineTest {
         fun `tapping RED at score 0 floors to 0`() = testScope.runTest {
             val engine = GameEngine(redSpawner)
             engine.startGame()
+            engine.setCellColor(0, CellColor.RED)
             engine.tapCell(0)
             assertEquals(0, engine.state.value.score)
         }
@@ -144,6 +181,7 @@ class GameEngineTest {
         fun `tapping YELLOW adds 3 points`() = testScope.runTest {
             val engine = GameEngine(yellowSpawner)
             engine.startGame()
+            engine.setCellColor(0, CellColor.YELLOW)
             val result = engine.tapCell(0)
             assertEquals(3, engine.state.value.score)
             assertEquals(TapResult.Scored(3, YELLOW_TIME_BONUS), result)
@@ -154,6 +192,7 @@ class GameEngineTest {
             val engine = GameEngine(yellowSpawner)
             engine.startGame()
             val initialTime = engine.state.value.timeRemaining
+            engine.setCellColor(0, CellColor.YELLOW)
             engine.tapCell(0)
             assertEquals(initialTime + YELLOW_TIME_BONUS, engine.state.value.timeRemaining)
         }
@@ -162,7 +201,10 @@ class GameEngineTest {
         fun `score never goes below 0`() = testScope.runTest {
             val engine = GameEngine(redSpawner)
             engine.startGame()
-            repeat(5) { engine.tapCell(0) }
+            repeat(5) {
+                engine.setCellColor(it, CellColor.RED)
+                engine.tapCell(it)
+            }
             assertEquals(0, engine.state.value.score)
         }
 
@@ -170,9 +212,11 @@ class GameEngineTest {
         fun `timer is capped at MAX_TIME`() = testScope.runTest {
             val engine = GameEngine(yellowSpawner)
             engine.startGame()
-            // Start at 30, each tap adds +3 — after 10 taps we'd be at 60
-            // We'll simulate by directly setting state, then tapping
-            repeat(10) { engine.tapCell(0) }
+            // Tap yellow 10 times to exceed MAX_TIME
+            repeat(10) { i ->
+                engine.setCellColor(i % GRID_SIZE, CellColor.YELLOW)
+                engine.tapCell(i % GRID_SIZE)
+            }
             assertEquals(MAX_TIME, engine.state.value.timeRemaining)
         }
 
@@ -190,6 +234,14 @@ class GameEngineTest {
             advanceTimeBy((INITIAL_TIME / TICK_TIME_DECREMENT * TICK_INTERVAL_MS).toLong() + 100)
             job.cancel()
             assertEquals(GamePhase.GAME_OVER, engine.state.value.phase)
+            val result = engine.tapCell(0)
+            assertEquals(TapResult.Missed, result)
+        }
+
+        @Test
+        fun `tapping GRAY cell returns Missed`() = testScope.runTest {
+            engine.startGame()
+            // All cells start as GRAY
             val result = engine.tapCell(0)
             assertEquals(TapResult.Missed, result)
         }
@@ -260,16 +312,21 @@ class GameEngineTest {
         }
 
         @Test
-        fun `reset clears grid`() = testScope.runTest {
+        fun `reset clears grid to default state`() = testScope.runTest {
             engine.startGame()
             engine.reset()
-            assertTrue(engine.state.value.grid.isEmpty())
+            // Default GameState has 9 GRAY cells
+            assertEquals(9, engine.state.value.grid.size)
+            engine.state.value.grid.forEach { cell ->
+                assertEquals(CellColor.GRAY, cell.color)
+            }
         }
 
         @Test
         fun `reset clears score`() = testScope.runTest {
             val eng = GameEngine(yellowSpawner)
             eng.startGame()
+            eng.setCellColor(0, CellColor.YELLOW)
             eng.tapCell(0)
             eng.reset()
             assertEquals(0, eng.state.value.score)
@@ -299,10 +356,11 @@ class GameEngineTest {
         }
 
         @Test
-        fun `tapCell returns TapResult Scored for valid taps`() = testScope.runTest {
+        fun `tapCell returns TapResult Missed for GRAY cells`() = testScope.runTest {
             engine.startGame()
+            // All cells start as GRAY
             val result = engine.tapCell(0)
-            assertInstanceOf(TapResult.Scored::class.java, result)
+            assertEquals(TapResult.Missed, result)
         }
 
         @Test
@@ -316,6 +374,7 @@ class GameEngineTest {
         fun `StateFlow emits updated state after tap`() = testScope.runTest {
             val engine = GameEngine(greenSpawner)
             engine.startGame()
+            engine.setCellColor(0, CellColor.GREEN)
             val collected = mutableListOf<Int>()
             val job = launch {
                 engine.state.collect { collected.add(it.score) }
