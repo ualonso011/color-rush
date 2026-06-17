@@ -2,10 +2,11 @@ package com.gentleai.colorrush.ui.game.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -20,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.gentleai.colorrush.ui.game.ScoreEffect
 import kotlinx.coroutines.delay
@@ -28,7 +28,7 @@ import kotlinx.coroutines.delay
 /**
  * Floating score popup animation that appears when a cell is tapped.
  *
- * Shows "+1" (green), "-1" (red), or "+3" (yellow) with a fade-in,
+ * Shows "+1" (green), "-1" (red), or "+3" (yellow) with a scale-in,
  * upward-slide, and fade-out animation.
  *
  * The popup auto-dismisses after [DURATION_MS] milliseconds.
@@ -49,7 +49,7 @@ fun ScorePopup(
         if (effect != null) {
             currentPoints = effect.points
             isVisible = true
-            delay(800L)
+            delay(1000L)
             isVisible = false
         }
     }
@@ -69,14 +69,17 @@ fun ScorePopup(
         AnimatedVisibility(
             visible = isVisible,
             enter = slideInVertically(
+                animationSpec = tween(durationMillis = 400),
+                initialOffsetY = { it },
+            ) + fadeIn(animationSpec = tween(durationMillis = 300)) + scaleIn(
                 animationSpec = tween(durationMillis = 300),
-                initialOffsetY = { it / 2 },
+                initialScale = 0.5f
             ),
             exit = fadeOut(animationSpec = tween(durationMillis = 500)),
         ) {
             Text(
                 text = text,
-                style = MaterialTheme.typography.headlineLarge,
+                style = MaterialTheme.typography.displayMedium,
                 fontWeight = FontWeight.Black,
                 color = textColor,
                 textAlign = TextAlign.Center,

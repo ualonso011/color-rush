@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Basque strings — default fallback locale -->
 <resources>
-    <string name="app_name">ColorRush v2</string>
+    <string name="app_name">ColorRush</string>
     <string name="play">Jolastu</string>
     <string name="version">Bertsioa %s</string>
     <string name="language_eu">Euskara</string>

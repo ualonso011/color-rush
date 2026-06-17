@@ -60,7 +60,7 @@ class GameEngine(
 
         // Color spawning mechanics
         /** Maximum number of active colors at any time. */
-        const val MAX_ACTIVE_COLORS = 2
+        const val MAX_ACTIVE_COLORS = 3
 
         /** Minimum lifetime for a color in milliseconds. */
         const val MIN_LIFETIME_MS = 1500L
@@ -69,7 +69,7 @@ class GameEngine(
         const val MAX_LIFETIME_MS = 3500L
 
         /** Probability of spawning a new color per tick (when under max). */
-        const val SPAWN_PROBABILITY = 0.03f // ~3% per tick = ~1 spawn every 3.3 seconds
+        const val SPAWN_PROBABILITY = 0.08f // ~8% per tick = ~1 spawn every 1.2 seconds
     }
 
     // ── Reactive state ────────────────────────────────────────────────────
@@ -197,7 +197,11 @@ class GameEngine(
 
             // 3. Spawn new colors if under max
             val activeCount = grid.count { it.color != CellColor.GRAY }
-            if (activeCount < MAX_ACTIVE_COLORS && random.nextFloat() < SPAWN_PROBABILITY) {
+            // Always spawn if no colors active, otherwise use probability
+            val shouldSpawn = activeCount == 0 || 
+                (activeCount < MAX_ACTIVE_COLORS && random.nextFloat() < SPAWN_PROBABILITY)
+            
+            if (shouldSpawn) {
                 val grayCells = grid.filter { it.color == CellColor.GRAY }
                 if (grayCells.isNotEmpty()) {
                     val targetCell = grayCells[random.nextInt(grayCells.size)]
