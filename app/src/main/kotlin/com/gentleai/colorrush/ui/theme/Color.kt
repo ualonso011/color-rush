@@ -2,66 +2,53 @@ package com.gentleai.colorrush.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Game cell colors
-val CellGreen = Color(0xFF4CAF50)
-val CellRed = Color(0xFFF44336)
-val CellYellow = Color(0xFFFFEB3B)
-val CellGray = Color(0xFF424242) // Dark gray for inactive cells
+// ═══════════════════════════════════════════════════════════════
+// NEON ARCADE PALETTE — Dark-only, vibrant, glow-friendly
+// ═══════════════════════════════════════════════════════════════
 
-// Light theme palette — ColorRush game colors
-val PrimaryLight = Color(0xFF7C4DFF) // Deep purple — main brand
-val OnPrimaryLight = Color(0xFFFFFFFF)
-val PrimaryContainerLight = Color(0xFFEDE7F6) // Light purple tint
-val OnPrimaryContainerLight = Color(0xFF4A148C) // Dark purple
+// ── Core brand ─────────────────────────────────────────────────
+val NeonCyan = Color(0xFF00FFFF)
+val NeonMagenta = Color(0xFFFF00FF)
+val NeonYellow = Color(0xFFFFEB3B)
+val NeonRed = Color(0xFFFF0055)
 
-val SecondaryLight = Color(0xFFFF6D00) // Orange accent
-val OnSecondaryLight = Color(0xFFFFFFFF)
-val SecondaryContainerLight = Color(0xFFFFF3E0) // Light orange tint
-val OnSecondaryContainerLight = Color(0xFFE65100) // Dark orange
+// ── Dark backgrounds ───────────────────────────────────────────
+val BackgroundDark = Color(0xFF0A0E27)    // Deep space blue
+val SurfaceDark = Color(0xFF0D1117)       // Dark blue-black
+val SurfaceVariantDark = Color(0xFF161B33) // Slightly lighter panel
 
-val TertiaryLight = Color(0xFF00C853) // Green accent
-val OnTertiaryLight = Color(0xFFFFFFFF)
-val TertiaryContainerLight = Color(0xFFE8F5E9) // Light green tint
-val OnTertiaryContainerLight = Color(0xFF1B5E20) // Dark green
+// ── On-colors (text / icons on neon backgrounds) ───────────────
+val OnNeonCyan = Color(0xFF0A0E27)
+val OnNeonMagenta = Color(0xFF0A0E27)
+val OnNeonYellow = Color(0xFF0A0E27)
+val OnNeonRed = Color(0xFF0A0E27)
 
-val ErrorLight = Color(0xFFB00020)
-val OnErrorLight = Color(0xFFFFFFFF)
-val ErrorContainerLight = Color(0xFFFFCDD2)
-val OnErrorContainerLight = Color(0xFFB71C1C)
+// ── Text on dark backgrounds ───────────────────────────────────
+val OnBackgroundDark = Color(0xFFE8E8F0)
+val OnSurfaceDark = Color(0xFFE8E8F0)
+val OnSurfaceVariantDark = Color(0xFF9A9AB0)
 
-val BackgroundLight = Color(0xFFFFFBFE)
-val OnBackgroundLight = Color(0xFF1C1B1F)
-val SurfaceLight = Color(0xFFFFFBFE)
-val OnSurfaceLight = Color(0xFF1C1B1F)
-val SurfaceVariantLight = Color(0xFFE7E0EC)
-val OnSurfaceVariantLight = Color(0xFF49454F)
-val OutlineLight = Color(0xFF7A757F)
+// ── Outline ────────────────────────────────────────────────────
+val OutlineDark = Color(0xFF2A2F4A)
 
-// Dark theme palette — lighter tints on dark surfaces
-val PrimaryDark = Color(0xFFB388FF) // Light purple
-val OnPrimaryDark = Color(0xFF2A0063) // Dark purple text
-val PrimaryContainerDark = Color(0xFF4A148C) // Medium dark purple
-val OnPrimaryContainerDark = Color(0xFFEDE7F6) // Light purple
+// ── Glow / shadow helpers ──────────────────────────────────────
+val GlowCyan = Color(0x4400FFFF)
+val GlowMagenta = Color(0x44FF00FF)
+val GlowYellow = Color(0x44FFFF00)
+val GlowRed = Color(0x44FF0055)
 
-val SecondaryDark = Color(0xFFFFAB40) // Light orange
-val OnSecondaryDark = Color(0xFF3E1D00) // Dark orange text
-val SecondaryContainerDark = Color(0xFFE65100) // Medium orange
-val OnSecondaryContainerDark = Color(0xFFFFF3E0) // Light orange
+// ── Game cell colors (more vibrant / neon) ─────────────────────
+val CellGreen = Color(0xFF00E676)   // Bright neon green
+val CellRed = Color(0xFFFF1744)     // Bright neon red
+val CellYellow = Color(0xFFFFEA00)  // Bright neon yellow
+val CellGray = Color(0xFF2A2F4A)    // Dark blue-gray for inactive cells
 
-val TertiaryDark = Color(0xFF69F0AE) // Light green
-val OnTertiaryDark = Color(0xFF003300) // Dark green text
-val TertiaryContainerDark = Color(0xFF1B5E20) // Dark green
-val OnTertiaryContainerDark = Color(0xFFE8F5E9) // Light green
+// ── Ranking medals ─────────────────────────────────────────────
+val MedalGold = Color(0xFFFFD700)
+val MedalSilver = Color(0xFFC0C0C0)
+val MedalBronze = Color(0xFFCD7F32)
 
-val ErrorDark = Color(0xFFFFB4AB)
-val OnErrorDark = Color(0xFF690005)
-val ErrorContainerDark = Color(0xFF93000A)
-val OnErrorContainerDark = Color(0xFFFFDAD6)
-
-val BackgroundDark = Color(0xFF1C1B1F)
-val OnBackgroundDark = Color(0xFFE6E1E5)
-val SurfaceDark = Color(0xFF1C1B1F)
-val OnSurfaceDark = Color(0xFFE6E1E5)
-val SurfaceVariantDark = Color(0xFF49454F)
-val OnSurfaceVariantDark = Color(0xFFCAC4D0)
-val OutlineDark = Color(0xFF938F99)
+// ── Timer urgency ──────────────────────────────────────────────
+val TimerNormal = NeonCyan
+val TimerWarning = NeonYellow
+val TimerDanger = NeonRed

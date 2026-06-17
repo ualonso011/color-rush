@@ -1,6 +1,7 @@
 package com.gentleai.colorrush.ui.game
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,9 +23,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -33,21 +39,19 @@ import com.gentleai.colorrush.domain.model.GamePhase
 import com.gentleai.colorrush.ui.game.components.ColorCell
 import com.gentleai.colorrush.ui.game.components.ScorePopup
 import com.gentleai.colorrush.ui.game.components.TimerBar
+import com.gentleai.colorrush.ui.theme.NeonCyan
 import kotlinx.coroutines.delay
 
 /**
- * Main game screen composable.
+ * Main game screen composable with immersive arcade styling.
  *
  * Layout (top to bottom):
- * 1. Score display (current points)
- * 2. Timer bar (animated progress + countdown)
- * 3. 3×3 game grid (tappable color cells)
+ * 1. Score display (large neon text)
+ * 2. Timer bar (neon animated progress + countdown)
+ * 3. 3×3 game grid (tappable neon color cells)
  * 4. Score popup overlay (floating +1/-1/+3 animation)
  *
- * Lifecycle integration:
- * - Pauses/resumes background audio on lifecycle events.
- * - Navigates to game-over screen when [GamePhase.GAME_OVER] is reached.
- * - Handles system back press to return to main menu.
+ * Background features a gradient with subtle grid pattern.
  *
  * @param onGameOver Callback with the final score when the game ends.
  * @param onBackToMain Callback when the user wants to return to the main menu.
@@ -61,7 +65,6 @@ fun GameScreen(
     modifier: Modifier = Modifier,
     viewModel: GameViewModel = hiltViewModel(),
 ) {
-    // ── State collection ────────────────────────────────────────────────────
     val state by viewModel.state.collectAsState()
 
     // ── Lifecycle observer for audio ────────────────────────────────────────
@@ -81,7 +84,6 @@ fun GameScreen(
     // ── Navigation on game over ─────────────────────────────────────────────
     LaunchedEffect(state.phase) {
         if (state.phase == GamePhase.GAME_OVER) {
-            // Small delay to let the final tick settle, then navigate
             delay(200L)
             onGameOver(state.score)
         }
@@ -104,29 +106,63 @@ fun GameScreen(
     }
 
     // ── UI Layout ───────────────────────────────────────────────────────────
-    Box(modifier = modifier.fillMaxSize()) {
-
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        Color(0xFF0A0E27),
+                        Color(0xFF0D1117),
+                        Color(0xFF0A0E27),
+                    ),
+                ),
+            )
+            .drawBehind {
+                // Subtle grid pattern
+                val gridSpacing = 60f * density
+                val gridColor = Color(0x08FFFFFF)
+                var x = 0f
+                while (x < size.width) {
+                    drawLine(gridColor, Offset(x, 0f), Offset(x, size.height))
+                    x += gridSpacing
+                }
+                var y = 0f
+                while (y < size.height) {
+                    drawLine(gridColor, Offset(0f, y), Offset(size.width, y))
+                    y += gridSpacing
+                }
+            },
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 16.dp, vertical = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-            // ── Score display ─────────────────────────────────────────────
+            // ── Score display (prominent neon style) ──────────────────────
             Text(
-                text = androidx.compose.ui.res.stringResource(
-                    com.gentleai.colorrush.R.string.game_score,
-                    state.score,
-                ),
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Black,
-                color = MaterialTheme.colorScheme.primary,
+                text = "SCORE",
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                letterSpacing = 4.sp,
                 textAlign = TextAlign.Center,
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = "${state.score}",
+                fontSize = 48.sp,
+                fontWeight = FontWeight.Black,
+                color = NeonCyan,
+                textAlign = TextAlign.Center,
+                letterSpacing = 2.sp,
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
 
             // ── Timer bar ─────────────────────────────────────────────────
             TimerBar(
@@ -134,7 +170,7 @@ fun GameScreen(
                 totalTime = state.totalTime,
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
             // ── 3×3 Game grid ─────────────────────────────────────────────
             GameGrid(
@@ -145,7 +181,7 @@ fun GameScreen(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // ── Phase indicator for development ───────────────────────────
+            // ── Phase indicator ───────────────────────────────────────────
             if (state.phase != GamePhase.PLAYING) {
                 Text(
                     text = when (state.phase) {
@@ -166,8 +202,8 @@ fun GameScreen(
         ScorePopup(
             effect = currentScoreEffect,
             modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(top = 120.dp),
+                .align(Alignment.Center)
+                .padding(bottom = 80.dp),
         )
     }
 }
@@ -192,7 +228,7 @@ private fun GameGrid(
 
     Column(
         modifier = Modifier
-            .fillMaxWidth(0.85f),
+            .fillMaxWidth(0.8f),
         verticalArrangement = Arrangement.spacedBy(0.dp),
     ) {
         for (row in 0..2) {

@@ -1,6 +1,8 @@
 package com.gentleai.colorrush.ui.game.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -14,7 +16,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,14 +29,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.gentleai.colorrush.ui.game.ScoreEffect
 import kotlinx.coroutines.delay
 
 /**
  * Floating score popup animation that appears when a cell is tapped.
  *
- * Shows "+1" (green), "-1" (red), or "1 + clock icon" (yellow) with a scale-in,
- * upward-slide, and fade-out animation.
+ * Features dramatic arcade-style animations:
+ * - Overshoot spring bounce-in scale
+ * - Large neon text with glow effect
+ * - Clock icon with neon halo for time bonuses
+ * - Upward slide with fade-out
  *
  * The popup auto-dismisses after [DURATION_MS] milliseconds.
  *
@@ -47,7 +52,6 @@ fun ScorePopup(
     effect: ScoreEffect?,
     modifier: Modifier = Modifier,
 ) {
-    // Track visibility state manually to control the show duration
     var isVisible by remember { mutableStateOf(false) }
     var currentPoints by remember { mutableStateOf(0) }
     var currentTimeBonus by remember { mutableStateOf(0f) }
@@ -71,10 +75,13 @@ fun ScorePopup(
     }
 
     val textColor = when {
-        isTimeBonus -> Color(0xFFFFEB3B) // Yellow/gold
-        currentPoints > 0 -> Color(0xFF4CAF50)  // Green
-        else -> Color(0xFFF44336)                // Red
+        isTimeBonus -> Color(0xFFFFEA00) // Neon yellow
+        currentPoints > 0 -> Color(0xFF00E676) // Neon green
+        else -> Color(0xFFFF1744) // Neon red
     }
+
+    // Glow color matching the text
+    val glowColor = textColor.copy(alpha = 0.25f)
 
     Box(modifier = modifier) {
         AnimatedVisibility(
@@ -82,9 +89,14 @@ fun ScorePopup(
             enter = slideInVertically(
                 animationSpec = tween(durationMillis = 400),
                 initialOffsetY = { it },
-            ) + fadeIn(animationSpec = tween(durationMillis = 300)) + scaleIn(
-                animationSpec = tween(durationMillis = 300),
-                initialScale = 0.5f
+            ) + fadeIn(
+                animationSpec = tween(durationMillis = 200),
+            ) + scaleIn(
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                    stiffness = Spring.StiffnessLow,
+                ),
+                initialScale = 0.3f,
             ),
             exit = fadeOut(animationSpec = tween(durationMillis = 500)),
         ) {
@@ -92,29 +104,59 @@ fun ScorePopup(
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        // Glow behind text
+                        Text(
+                            text = text,
+                            fontSize = 72.sp,
+                            fontWeight = FontWeight.Black,
+                            color = glowColor,
+                            textAlign = TextAlign.Center,
+                        )
+                        Text(
+                            text = text,
+                            style = androidx.compose.material3.MaterialTheme.typography.displayLarge,
+                            fontWeight = FontWeight.Black,
+                            color = textColor,
+                            textAlign = TextAlign.Center,
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(12.dp))
+                    // Icon with glow
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = Icons.Filled.Timer,
+                            contentDescription = "Time bonus",
+                            tint = glowColor,
+                            modifier = Modifier.size(80.dp),
+                        )
+                        Icon(
+                            imageVector = Icons.Filled.Timer,
+                            contentDescription = "Time bonus",
+                            tint = textColor,
+                            modifier = Modifier.size(56.dp),
+                        )
+                    }
+                }
+            } else {
+                Box(contentAlignment = Alignment.Center) {
+                    // Glow layer
                     Text(
                         text = text,
-                        style = MaterialTheme.typography.displayMedium,
+                        fontSize = 72.sp,
+                        fontWeight = FontWeight.Black,
+                        color = glowColor,
+                        textAlign = TextAlign.Center,
+                    )
+                    // Foreground text
+                    Text(
+                        text = text,
+                        style = androidx.compose.material3.MaterialTheme.typography.displayLarge,
                         fontWeight = FontWeight.Black,
                         color = textColor,
                         textAlign = TextAlign.Center,
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Icon(
-                        imageVector = Icons.Filled.Timer,
-                        contentDescription = "Time bonus",
-                        tint = textColor,
-                        modifier = Modifier.size(48.dp),
-                    )
                 }
-            } else {
-                Text(
-                    text = text,
-                    style = MaterialTheme.typography.displayMedium,
-                    fontWeight = FontWeight.Black,
-                    color = textColor,
-                    textAlign = TextAlign.Center,
-                )
             }
         }
     }
