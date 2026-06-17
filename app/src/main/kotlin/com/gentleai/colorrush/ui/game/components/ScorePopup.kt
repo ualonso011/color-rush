@@ -1,16 +1,13 @@
 package com.gentleai.colorrush.ui.game.components
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
@@ -26,42 +23,64 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gentleai.colorrush.ui.game.ScoreEffect
 import kotlinx.coroutines.delay
+import kotlin.math.roundToInt
 
 /**
  * Floating score popup animation that appears when a cell is tapped.
  *
- * Features dramatic arcade-style animations:
- * - Overshoot spring bounce-in scale
- * - Large neon text with glow effect
- * - Clock icon with neon halo for time bonuses
- * - Upward slide with fade-out
+ * Features Mario Bros coin-style animation:
+ * - Spawns from the tapped cell position
+ * - Slides upward with fade-out
+ * - Smaller, compact text size
+ * - Clock icon for time bonuses
  *
- * The popup auto-dismisses after [DURATION_MS] milliseconds.
+ * The popup auto-dismisses after animation completes.
  *
  * @param effect The current [ScoreEffect] to display, or null to hide.
+ * @param cellSize Size of each cell in the grid (in dp).
+ * @param gridWidth Total width of the grid (in dp).
+ * @param gridTopOffset Vertical offset from top to the grid start (in dp).
  * @param modifier Optional [Modifier] applied to the root box.
  */
 @Composable
 fun ScorePopup(
     effect: ScoreEffect?,
+    cellSize: Float,
+    gridWidth: Float,
+    gridTopOffset: Float,
     modifier: Modifier = Modifier,
 ) {
     var isVisible by remember { mutableStateOf(false) }
     var currentPoints by remember { mutableStateOf(0) }
     var currentTimeBonus by remember { mutableStateOf(0f) }
+    var cellIndex by remember { mutableStateOf(0) }
 
+    // Animation for upward movement
+    val offsetY = remember { Animatable(0f) }
+    
     LaunchedEffect(effect) {
         if (effect != null) {
             currentPoints = effect.points
             currentTimeBonus = effect.timeBonus
+            cellIndex = effect.cellIndex
             isVisible = true
-            delay(1000L)
+            
+            // Reset and animate upward
+            offsetY.snapTo(0f)
+            offsetY.animateTo(
+                targetValue = -80f, // Move up 80dp
+                animationSpec = tween(durationMillis = 600)
+            )
+            
+            delay(200L)
             isVisible = false
         }
     }
@@ -80,78 +99,52 @@ fun ScorePopup(
         else -> Color(0xFFFF1744) // Neon red
     }
 
-    // Glow color matching the text
-    val glowColor = textColor.copy(alpha = 0.25f)
+    // Calculate cell position based on index (0-8)
+    val row = cellIndex / 3
+    val col = cellIndex % 3
+    
+    // Calculate offsets
+    val gridLeftOffset = (gridWidth - (cellSize * 3)) / 2
+    val cellX = gridLeftOffset + (col * cellSize) + (cellSize / 2)
+    val cellY = gridTopOffset + (row * cellSize) + (cellSize / 2)
+
+    val density = LocalDensity.current
 
     Box(modifier = modifier) {
-        AnimatedVisibility(
-            visible = isVisible,
-            enter = slideInVertically(
-                animationSpec = tween(durationMillis = 400),
-                initialOffsetY = { it },
-            ) + fadeIn(
-                animationSpec = tween(durationMillis = 200),
-            ) + scaleIn(
-                animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioMediumBouncy,
-                    stiffness = Spring.StiffnessLow,
-                ),
-                initialScale = 0.3f,
-            ),
-            exit = fadeOut(animationSpec = tween(durationMillis = 500)),
-        ) {
-            if (isTimeBonus) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        // Glow behind text
-                        Text(
-                            text = text,
-                            fontSize = 72.sp,
-                            fontWeight = FontWeight.Black,
-                            color = glowColor,
-                            textAlign = TextAlign.Center,
+        if (isVisible) {
+            Box(
+                modifier = Modifier.offset {
+                    with(density) {
+                        IntOffset(
+                            x = cellX.roundToInt().dp.roundToPx(),
+                            y = (cellY + offsetY.value).roundToInt().dp.roundToPx()
                         )
+                    }
+                },
+            ) {
+                if (isTimeBonus) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
                         Text(
                             text = text,
-                            style = androidx.compose.material3.MaterialTheme.typography.displayLarge,
+                            fontSize = 28.sp,
                             fontWeight = FontWeight.Black,
                             color = textColor,
                             textAlign = TextAlign.Center,
                         )
-                    }
-                    Spacer(modifier = Modifier.width(12.dp))
-                    // Icon with glow
-                    Box(contentAlignment = Alignment.Center) {
-                        Icon(
-                            imageVector = Icons.Filled.Timer,
-                            contentDescription = "Time bonus",
-                            tint = glowColor,
-                            modifier = Modifier.size(80.dp),
-                        )
+                        Spacer(modifier = Modifier.width(4.dp))
                         Icon(
                             imageVector = Icons.Filled.Timer,
                             contentDescription = "Time bonus",
                             tint = textColor,
-                            modifier = Modifier.size(56.dp),
+                            modifier = Modifier.size(24.dp),
                         )
                     }
-                }
-            } else {
-                Box(contentAlignment = Alignment.Center) {
-                    // Glow layer
+                } else {
                     Text(
                         text = text,
-                        fontSize = 72.sp,
-                        fontWeight = FontWeight.Black,
-                        color = glowColor,
-                        textAlign = TextAlign.Center,
-                    )
-                    // Foreground text
-                    Text(
-                        text = text,
-                        style = androidx.compose.material3.MaterialTheme.typography.displayLarge,
+                        fontSize = 28.sp,
                         fontWeight = FontWeight.Black,
                         color = textColor,
                         textAlign = TextAlign.Center,

@@ -27,6 +27,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -134,6 +135,12 @@ fun GameScreen(
                 }
             },
     ) {
+        // Calculate grid dimensions for popup positioning
+        val screenWidth = LocalConfiguration.current.screenWidthDp.toFloat()
+        val gridWidth = screenWidth * 0.8f // Grid uses 80% of screen width
+        val cellSize = gridWidth / 3f
+        val gridTopOffset = 8f + 4f + 20f + 32f + 24f // Score label + spacing + timer + spacing + top padding
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -200,12 +207,13 @@ fun GameScreen(
             }
         }
 
-        // ── Score popup overlay ────────────────────────────────────────────
+        // ── Score popup overlay (Mario Bros coin style) ────────────────────
         ScorePopup(
             effect = currentScoreEffect,
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(top = 180.dp),
+            cellSize = cellSize,
+            gridWidth = gridWidth,
+            gridTopOffset = gridTopOffset,
+            modifier = Modifier.align(Alignment.TopStart),
         )
     }
 }
