@@ -143,19 +143,19 @@ fun MainScreen(
         }
 
         val glowText = buildAnnotatedString {
-            withStyle(SpanStyle(fontSize = 68.sp)) { append("C") }
+            withStyle(SpanStyle(fontSize = 72.sp)) { append("C") }
             append("OLOR")
-            withStyle(SpanStyle(fontSize = 68.sp)) { append("R") }
+            withStyle(SpanStyle(fontSize = 72.sp)) { append("R") }
             append("USH")
         }
 
         Box(contentAlignment = Alignment.Center) {
-            // Glow layer
+            // Glow layer - larger and more visible
             Text(
                 text = glowText,
                 fontWeight = FontWeight.Black,
-                color = NeonCyan.copy(alpha = titleGlowAlpha * 0.3f),
-                letterSpacing = 8.sp,
+                color = NeonCyan.copy(alpha = titleGlowAlpha * 0.4f),
+                letterSpacing = 10.sp,
                 textAlign = TextAlign.Center,
             )
             // Foreground

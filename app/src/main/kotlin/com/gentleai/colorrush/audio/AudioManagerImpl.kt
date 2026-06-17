@@ -116,9 +116,10 @@ class AudioManagerImpl @Inject constructor(
     override fun stopBgm() {
         try {
             mediaPlayer?.apply {
-                if (isPlaying) stop()
-                // MediaPlayer in stopped state must be prepared before start() again.
-                prepareAsync()
+                if (isPlaying) {
+                    pause()
+                    seekTo(0)
+                }
             }
         } catch (e: Exception) {
             Log.w(TAG, "Failed to stop BGM", e)

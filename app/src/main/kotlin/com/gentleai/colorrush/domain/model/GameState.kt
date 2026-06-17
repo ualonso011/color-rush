@@ -15,4 +15,5 @@ data class GameState(
     val score: Int = 0,
     val timeRemaining: Float = 30f,
     val totalTime: Float = 30f,
+    val consecutiveRedTaps: Int = 0,
 )

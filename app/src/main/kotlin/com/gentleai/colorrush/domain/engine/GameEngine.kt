@@ -52,25 +52,25 @@ class GameEngine(
 
         // Scoring values
         const val GREEN_POINTS = 1
-        const val RED_POINTS = -1
+        const val RED_POINTS_BASE = -1
         const val YELLOW_POINTS = 3
 
-        /** Extra seconds awarded for tapping a YELLOW cell (random 1-3). */
+        /** Extra seconds awarded for tapping a YELLOW cell (random 1-5, weighted). */
         const val YELLOW_TIME_BONUS_MIN = 1f
-        const val YELLOW_TIME_BONUS_MAX = 3f
+        const val YELLOW_TIME_BONUS_MAX = 5f
 
         // Color spawning mechanics
         /** Maximum number of active colors at any time. */
-        const val MAX_ACTIVE_COLORS = 3
+        const val MAX_ACTIVE_COLORS = 4
 
         /** Minimum lifetime for a color in milliseconds. */
-        const val MIN_LIFETIME_MS = 800L
+        const val MIN_LIFETIME_MS = 600L
 
         /** Maximum lifetime for a color in milliseconds. */
-        const val MAX_LIFETIME_MS = 2000L
+        const val MAX_LIFETIME_MS = 1500L
 
         /** Probability of spawning a new color per tick (when under max). */
-        const val SPAWN_PROBABILITY = 0.15f // ~15% per tick = ~1 spawn every 0.7 seconds
+        const val SPAWN_PROBABILITY = 0.25f // ~25% per tick = ~1 spawn every 0.4 seconds
     }
 
     // ── Reactive state ────────────────────────────────────────────────────
@@ -93,6 +93,7 @@ class GameEngine(
             score = 0,
             timeRemaining = INITIAL_TIME,
             totalTime = INITIAL_TIME,
+            consecutiveRedTaps = 0,
         )
     }
 
@@ -115,15 +116,27 @@ class GameEngine(
         val cell = current.grid[index]
         if (cell.color == CellColor.GRAY) return TapResult.Missed
 
+        // Calculate points based on color
         val points = when (cell.color) {
             CellColor.GREEN -> GREEN_POINTS
-            CellColor.RED -> RED_POINTS
+            CellColor.RED -> {
+                // Incremental red damage: -1, -2, -3, etc.
+                RED_POINTS_BASE * (current.consecutiveRedTaps + 1)
+            }
             CellColor.YELLOW -> YELLOW_POINTS
             CellColor.GRAY -> 0 // handled above, keeps the when exhaustive
         }
+
+        // Calculate time bonus for yellow (weighted: 1-5, 5 is less probable)
         val timeBonus = if (cell.color == CellColor.YELLOW) {
-            random.nextFloat() * (YELLOW_TIME_BONUS_MAX - YELLOW_TIME_BONUS_MIN) + YELLOW_TIME_BONUS_MIN
+            getWeightedYellowTimeBonus()
         } else 0f
+
+        // Update consecutive red taps counter
+        val newConsecutiveRedTaps = when (cell.color) {
+            CellColor.RED -> current.consecutiveRedTaps + 1
+            else -> 0 // Reset on green or yellow
+        }
 
         val newScore = maxOf(0, current.score + points)
         val newTime = minOf(MAX_TIME, current.timeRemaining + timeBonus)
@@ -135,16 +148,36 @@ class GameEngine(
             score = newScore,
             timeRemaining = newTime,
             grid = newGrid,
+            consecutiveRedTaps = newConsecutiveRedTaps,
         )
 
         return TapResult.Scored(points = points, timeBonus = timeBonus)
     }
 
     /**
+     * Returns a weighted random time bonus for yellow cells.
+     * Values 1-4 have equal probability, 5 is half as likely.
+     * Distribution: ~22% each for 1-4, ~11% for 5
+     */
+    private fun getWeightedYellowTimeBonus(): Float {
+        // Weights: 1->2, 2->2, 3->2, 4->2, 5->1 (total weight = 9)
+        val roll = random.nextInt(9)
+        return when (roll) {
+            0, 1 -> 1f  // 2/9 = ~22%
+            2, 3 -> 2f  // 2/9 = ~22%
+            4, 5 -> 3f  // 2/9 = ~22%
+            6, 7 -> 4f  // 2/9 = ~22%
+            else -> 5f  // 1/9 = ~11%
+        }
+    }
+
+    /**
      * Resets the engine to its initial [GamePhase.MENU] state.
      */
     fun reset() {
-        _state.value = GameState()
+        _state.value = GameState(
+            consecutiveRedTaps = 0,
+        )
     }
 
     // ── Game loop (internal — called from ViewModel/Test scope) ────────────
