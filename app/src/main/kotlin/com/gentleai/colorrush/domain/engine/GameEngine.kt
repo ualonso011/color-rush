@@ -127,15 +127,16 @@ class GameEngine(
             CellColor.GRAY -> 0 // handled above, keeps the when exhaustive
         }
 
-        // Calculate time bonus for yellow (weighted: 1-5, 5 is less probable)
+        // Calculate time bonus for yellow (weighted: 2-5, 2 is most likely, 5 is least likely)
         val timeBonus = if (cell.color == CellColor.YELLOW) {
             getWeightedYellowTimeBonus()
         } else 0f
 
-        // Update consecutive red taps counter
-        val newConsecutiveRedTaps = when (cell.color) {
-            CellColor.RED -> current.consecutiveRedTaps + 1
-            else -> 0 // Reset on green or yellow
+        // Update consecutive red taps counter - only increments on red, never resets
+        val newConsecutiveRedTaps = if (cell.color == CellColor.RED) {
+            current.consecutiveRedTaps + 1
+        } else {
+            current.consecutiveRedTaps
         }
 
         val newScore = maxOf(0, current.score + points)
@@ -156,18 +157,18 @@ class GameEngine(
 
     /**
      * Returns a weighted random time bonus for yellow cells.
-     * Values 1-4 have equal probability, 5 is half as likely.
-     * Distribution: ~22% each for 1-4, ~11% for 5
+     * Descending distribution: 2 is most likely, 5 is least likely.
+     * No 1-second bonus.
+     * Distribution: 2->40%, 3->30%, 4->20%, 5->10%
      */
     private fun getWeightedYellowTimeBonus(): Float {
-        // Weights: 1->2, 2->2, 3->2, 4->2, 5->1 (total weight = 9)
-        val roll = random.nextInt(9)
+        // Weights: 2->4, 3->3, 4->2, 5->1 (total weight = 10)
+        val roll = random.nextInt(10)
         return when (roll) {
-            0, 1 -> 1f  // 2/9 = ~22%
-            2, 3 -> 2f  // 2/9 = ~22%
-            4, 5 -> 3f  // 2/9 = ~22%
-            6, 7 -> 4f  // 2/9 = ~22%
-            else -> 5f  // 1/9 = ~11%
+            0, 1, 2, 3 -> 2f   // 4/10 = 40%
+            4, 5, 6 -> 3f      // 3/10 = 30%
+            7, 8 -> 4f         // 2/10 = 20%
+            else -> 5f         // 1/10 = 10%
         }
     }
 

@@ -91,7 +91,7 @@ fun ScorePopup(
     val isTimeBonus = currentTimeBonus > 0f
 
     val text = when {
-        isTimeBonus -> "${currentPoints}"
+        isTimeBonus -> "+${currentTimeBonus.toInt()}s"
         currentPoints > 0 -> "+${currentPoints}"
         else -> "$currentPoints"
     }

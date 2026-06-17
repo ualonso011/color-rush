@@ -147,7 +147,7 @@ class GameEngineTest {
         }
 
         @Test
-        fun `tapping RED subtracts 1 point`() = testScope.runTest {
+        fun `tapping RED subtracts incremental points`() = testScope.runTest {
             val engine = GameEngine(redSpawner)
             engine.startGame()
             // First add some points
@@ -162,11 +162,43 @@ class GameEngineTest {
             engine.setCellColor(4, CellColor.GREEN)
             engine.tapCell(4) // score = 5
 
-            // Now test RED scoring
+            // Now test RED scoring - first tap = -1
             engine.setCellColor(5, CellColor.RED)
-            val result = engine.tapCell(5)
+            val result1 = engine.tapCell(5)
             assertEquals(4, engine.state.value.score)
-            assertEquals(-1, (result as TapResult.Scored).points)
+            assertEquals(-1, (result1 as TapResult.Scored).points)
+
+            // Second tap = -2
+            engine.setCellColor(6, CellColor.RED)
+            val result2 = engine.tapCell(6)
+            assertEquals(2, engine.state.value.score)
+            assertEquals(-2, (result2 as TapResult.Scored).points)
+
+            // Third tap = -3
+            engine.setCellColor(7, CellColor.RED)
+            val result3 = engine.tapCell(7)
+            assertEquals(0, engine.state.value.score)
+            assertEquals(-3, (result3 as TapResult.Scored).points)
+        }
+
+        @Test
+        fun `tapping RED counter does not reset on green or yellow`() = testScope.runTest {
+            val engine = GameEngine(redSpawner)
+            engine.startGame()
+            // First red tap = -1
+            engine.setCellColor(0, CellColor.RED)
+            engine.tapCell(0)
+            assertEquals(-1, engine.state.value.score)
+
+            // Tap green - should NOT reset counter
+            engine.setCellColor(1, CellColor.GREEN)
+            engine.tapCell(1)
+            assertEquals(0, engine.state.value.score)
+
+            // Second red tap = -2 (not -1)
+            engine.setCellColor(2, CellColor.RED)
+            val result = engine.tapCell(2)
+            assertEquals(-2, (result as TapResult.Scored).points)
         }
 
         @Test

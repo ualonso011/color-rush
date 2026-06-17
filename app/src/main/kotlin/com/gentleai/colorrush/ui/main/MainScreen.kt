@@ -143,9 +143,9 @@ fun MainScreen(
         }
 
         val glowText = buildAnnotatedString {
-            withStyle(SpanStyle(fontSize = 72.sp)) { append("C") }
+            withStyle(SpanStyle(fontSize = 68.sp)) { append("C") }
             append("OLOR")
-            withStyle(SpanStyle(fontSize = 72.sp)) { append("R") }
+            withStyle(SpanStyle(fontSize = 68.sp)) { append("R") }
             append("USH")
         }
 
