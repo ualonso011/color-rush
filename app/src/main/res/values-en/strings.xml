@@ -17,4 +17,7 @@
     <string name="main_menu">Main Menu</string>
     <string name="game_placeholder">Game screen coming soon!</string>
     <string name="game_score">Score: %d</string>
+    <string name="tap_color_beat_clock">Tap the color • Beat the clock</string>
+    <string name="final_score_label">Final Score</string>
+    <string name="score_label">SCORE</string>
 </resources>

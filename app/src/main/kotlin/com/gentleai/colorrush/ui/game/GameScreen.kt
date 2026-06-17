@@ -101,8 +101,6 @@ fun GameScreen(
     LaunchedEffect(Unit) {
         viewModel.scoreEffect.collect { effect ->
             currentScoreEffect = effect
-            delay(800L)
-            currentScoreEffect = null
         }
     }
 

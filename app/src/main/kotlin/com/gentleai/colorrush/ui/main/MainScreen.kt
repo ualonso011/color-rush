@@ -45,9 +45,12 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -129,11 +132,27 @@ fun MainScreen(
         Spacer(modifier = Modifier.weight(0.5f))
 
         // ── Title "COLORRUSH" with neon glow ──────────────────────────────
+        // Build annotated string with larger C and first R
+        val titleText = buildAnnotatedString {
+            // C - larger
+            withStyle(SpanStyle(fontSize = 68.sp)) { append("C") }
+            append("OLOR")
+            // First R - larger
+            withStyle(SpanStyle(fontSize = 68.sp)) { append("R") }
+            append("USH")
+        }
+
+        val glowText = buildAnnotatedString {
+            withStyle(SpanStyle(fontSize = 68.sp)) { append("C") }
+            append("OLOR")
+            withStyle(SpanStyle(fontSize = 68.sp)) { append("R") }
+            append("USH")
+        }
+
         Box(contentAlignment = Alignment.Center) {
             // Glow layer
             Text(
-                text = "COLORRUSH",
-                fontSize = 56.sp,
+                text = glowText,
                 fontWeight = FontWeight.Black,
                 color = NeonCyan.copy(alpha = titleGlowAlpha * 0.3f),
                 letterSpacing = 8.sp,
@@ -141,7 +160,7 @@ fun MainScreen(
             )
             // Foreground
             Text(
-                text = "COLORRUSH",
+                text = titleText,
                 style = MaterialTheme.typography.displayLarge,
                 fontWeight = FontWeight.Black,
                 color = NeonCyan,

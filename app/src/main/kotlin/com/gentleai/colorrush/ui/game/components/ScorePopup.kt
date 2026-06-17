@@ -80,7 +80,10 @@ fun ScorePopup(
                 animationSpec = tween(durationMillis = 600)
             )
             
-            delay(200L)
+            // Wait for remaining display time before hiding
+            delay(400L)
+            isVisible = false
+        } else {
             isVisible = false
         }
     }

@@ -102,6 +102,8 @@ class GameViewModel @Inject constructor(
 
     override fun onCleared() {
         super.onCleared()
-        audioManager.release()
+        // Don't release the singleton AudioManager here - it should persist
+        // across ViewModel recreations. Only stop playback.
+        audioManager.stopBgm()
     }
 }

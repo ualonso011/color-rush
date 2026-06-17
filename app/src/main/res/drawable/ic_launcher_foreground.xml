@@ -14,153 +14,153 @@
     <path
         android:fillColor="#00FFFF"
         android:fillAlpha="0.2"
-        android:pathData="M27,27 L49,27 L49,49 L27,49 Z" />
+        android:pathData="M23,23 L43,23 L43,43 L23,43 Z" />
     <path
         android:fillColor="#FF00FF"
         android:fillAlpha="0.2"
-        android:pathData="M49,27 L71,27 L71,49 L49,49 Z" />
+        android:pathData="M45,23 L65,23 L65,43 L45,43 Z" />
     <path
         android:fillColor="#FFFF00"
         android:fillAlpha="0.2"
-        android:pathData="M71,27 L93,27 L93,49 L71,49 Z" />
+        android:pathData="M67,23 L87,23 L87,43 L67,43 Z" />
     <!-- Row 1 glow -->
     <path
         android:fillColor="#FF00FF"
         android:fillAlpha="0.2"
-        android:pathData="M27,49 L49,49 L49,71 L27,71 Z" />
+        android:pathData="M23,45 L43,45 L43,65 L23,65 Z" />
     <path
         android:fillColor="#FFFF00"
         android:fillAlpha="0.2"
-        android:pathData="M49,49 L71,49 L71,71 L49,71 Z" />
+        android:pathData="M45,45 L65,45 L65,65 L45,65 Z" />
     <path
         android:fillColor="#00FFFF"
         android:fillAlpha="0.2"
-        android:pathData="M71,49 L93,49 L93,71 L71,71 Z" />
+        android:pathData="M67,45 L87,45 L87,65 L67,65 Z" />
     <!-- Row 2 glow -->
     <path
         android:fillColor="#FFFF00"
         android:fillAlpha="0.2"
-        android:pathData="M27,71 L49,71 L49,93 L27,93 Z" />
+        android:pathData="M23,67 L43,67 L43,87 L23,87 Z" />
     <path
         android:fillColor="#00FFFF"
         android:fillAlpha="0.2"
-        android:pathData="M49,71 L71,71 L71,93 L49,93 Z" />
+        android:pathData="M45,67 L65,67 L65,87 L45,87 Z" />
     <path
         android:fillColor="#FF00FF"
         android:fillAlpha="0.2"
-        android:pathData="M71,71 L93,71 L93,93 L71,93 Z" />
+        android:pathData="M67,67 L87,67 L87,87 L67,87 Z" />
 
     <!-- Glow layer (inner) - stronger glow closer to cells -->
     <!-- Row 0 glow -->
     <path
         android:fillColor="#00FFFF"
         android:fillAlpha="0.4"
-        android:pathData="M28,28 L48,28 L48,48 L28,48 Z" />
+        android:pathData="M24,24 L42,24 L42,42 L24,42 Z" />
     <path
         android:fillColor="#FF00FF"
         android:fillAlpha="0.4"
-        android:pathData="M50,28 L70,28 L70,48 L50,48 Z" />
+        android:pathData="M46,24 L64,24 L64,42 L46,42 Z" />
     <path
         android:fillColor="#FFFF00"
         android:fillAlpha="0.4"
-        android:pathData="M72,28 L92,28 L92,48 L72,48 Z" />
+        android:pathData="M68,24 L86,24 L86,42 L68,42 Z" />
     <!-- Row 1 glow -->
     <path
         android:fillColor="#FF00FF"
         android:fillAlpha="0.4"
-        android:pathData="M28,50 L48,50 L48,70 L28,70 Z" />
+        android:pathData="M24,46 L42,46 L42,64 L24,64 Z" />
     <path
         android:fillColor="#FFFF00"
         android:fillAlpha="0.4"
-        android:pathData="M50,50 L70,50 L70,70 L50,70 Z" />
+        android:pathData="M46,46 L64,46 L64,64 L46,64 Z" />
     <path
         android:fillColor="#00FFFF"
         android:fillAlpha="0.4"
-        android:pathData="M72,50 L92,50 L92,70 L72,70 Z" />
+        android:pathData="M68,46 L86,46 L86,64 L68,64 Z" />
     <!-- Row 2 glow -->
     <path
         android:fillColor="#FFFF00"
         android:fillAlpha="0.4"
-        android:pathData="M28,72 L48,72 L48,92 L28,92 Z" />
+        android:pathData="M24,68 L42,68 L42,86 L24,86 Z" />
     <path
         android:fillColor="#00FFFF"
         android:fillAlpha="0.4"
-        android:pathData="M50,72 L70,72 L70,92 L50,92 Z" />
+        android:pathData="M46,68 L64,68 L64,86 L46,86 Z" />
     <path
         android:fillColor="#FF00FF"
         android:fillAlpha="0.4"
-        android:pathData="M72,72 L92,72 L92,92 L72,92 Z" />
+        android:pathData="M68,68 L86,68 L86,86 L68,86 Z" />
 
     <!-- Main neon cells -->
     <!-- Row 0 -->
     <path
         android:fillColor="#00FFFF"
-        android:pathData="M29,29 L47,29 L47,47 L29,47 Z" />
+        android:pathData="M25,25 L41,25 L41,41 L25,41 Z" />
     <path
         android:fillColor="#FF00FF"
-        android:pathData="M51,29 L69,29 L69,47 L51,47 Z" />
+        android:pathData="M47,25 L63,25 L63,41 L47,41 Z" />
     <path
         android:fillColor="#FFFF00"
-        android:pathData="M73,29 L91,29 L91,47 L73,47 Z" />
+        android:pathData="M69,25 L85,25 L85,41 L69,41 Z" />
     <!-- Row 1 -->
     <path
         android:fillColor="#FF00FF"
-        android:pathData="M29,51 L47,51 L47,69 L29,69 Z" />
+        android:pathData="M25,47 L41,47 L41,63 L25,63 Z" />
     <path
         android:fillColor="#FFFF00"
-        android:pathData="M51,51 L69,51 L69,69 L51,69 Z" />
+        android:pathData="M47,47 L63,47 L63,63 L47,63 Z" />
     <path
         android:fillColor="#00FFFF"
-        android:pathData="M73,51 L91,51 L91,69 L73,69 Z" />
+        android:pathData="M69,47 L85,47 L85,63 L69,63 Z" />
     <!-- Row 2 -->
     <path
         android:fillColor="#FFFF00"
-        android:pathData="M29,73 L47,73 L47,91 L29,91 Z" />
+        android:pathData="M25,69 L41,69 L41,85 L25,85 Z" />
     <path
         android:fillColor="#00FFFF"
-        android:pathData="M51,73 L69,73 L69,91 L51,91 Z" />
+        android:pathData="M47,69 L63,69 L63,85 L47,85 Z" />
     <path
         android:fillColor="#FF00FF"
-        android:pathData="M73,73 L91,73 L91,91 L73,91 Z" />
+        android:pathData="M69,69 L85,69 L85,85 L69,85 Z" />
 
     <!-- Inner highlight for 3D effect -->
     <!-- Row 0 highlights -->
     <path
         android:fillColor="#FFFFFF"
         android:fillAlpha="0.3"
-        android:pathData="M29,29 L47,29 L47,33 L29,33 Z" />
+        android:pathData="M25,25 L41,25 L41,29 L25,29 Z" />
     <path
         android:fillColor="#FFFFFF"
         android:fillAlpha="0.3"
-        android:pathData="M51,29 L69,29 L69,33 L51,33 Z" />
+        android:pathData="M47,25 L63,25 L63,29 L47,29 Z" />
     <path
         android:fillColor="#FFFFFF"
         android:fillAlpha="0.3"
-        android:pathData="M73,29 L91,29 L91,33 L73,33 Z" />
+        android:pathData="M69,25 L85,25 L85,29 L69,29 Z" />
     <!-- Row 1 highlights -->
     <path
         android:fillColor="#FFFFFF"
         android:fillAlpha="0.3"
-        android:pathData="M29,51 L47,51 L47,55 L29,55 Z" />
+        android:pathData="M25,47 L41,47 L41,51 L25,51 Z" />
     <path
         android:fillColor="#FFFFFF"
         android:fillAlpha="0.3"
-        android:pathData="M51,51 L69,51 L69,55 L51,55 Z" />
+        android:pathData="M47,47 L63,47 L63,51 L47,51 Z" />
     <path
         android:fillColor="#FFFFFF"
         android:fillAlpha="0.3"
-        android:pathData="M73,51 L91,51 L91,55 L73,55 Z" />
+        android:pathData="M69,47 L85,47 L85,51 L69,51 Z" />
     <!-- Row 2 highlights -->
     <path
         android:fillColor="#FFFFFF"
         android:fillAlpha="0.3"
-        android:pathData="M29,73 L47,73 L47,77 L29,77 Z" />
+        android:pathData="M25,69 L41,69 L41,73 L25,73 Z" />
     <path
         android:fillColor="#FFFFFF"
         android:fillAlpha="0.3"
-        android:pathData="M51,73 L69,73 L69,77 L51,77 Z" />
+        android:pathData="M47,69 L63,69 L63,73 L47,73 Z" />
     <path
         android:fillColor="#FFFFFF"
         android:fillAlpha="0.3"
-        android:pathData="M73,73 L91,73 L91,77 L73,77 Z" />
+        android:pathData="M69,69 L85,69 L85,73 L69,73 Z" />
 </vector>
