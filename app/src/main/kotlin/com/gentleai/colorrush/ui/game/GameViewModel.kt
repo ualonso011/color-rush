@@ -78,7 +78,7 @@ class GameViewModel @Inject constructor(
                 else -> SfxType.TAP_RED
             }
             audioManager.playSfx(sfx)
-            _scoreEffect.tryEmit(ScoreEffect(points = result.points, cellIndex = index))
+            _scoreEffect.tryEmit(ScoreEffect(points = result.points, cellIndex = index, timeBonus = result.timeBonus))
         }
     }
 

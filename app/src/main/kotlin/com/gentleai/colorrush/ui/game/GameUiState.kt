@@ -30,8 +30,10 @@ data class GameUiState(
  *
  * @property points Points awarded (positive) or deducted (negative).
  * @property cellIndex Index of the tapped cell.
+ * @property timeBonus Time bonus awarded (for yellow cells).
  */
 data class ScoreEffect(
     val points: Int,
     val cellIndex: Int,
+    val timeBonus: Float = 0f,
 )

@@ -7,7 +7,13 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,7 +34,7 @@ import kotlinx.coroutines.delay
 /**
  * Floating score popup animation that appears when a cell is tapped.
  *
- * Shows "+1" (green), "-1" (red), or "+3" (yellow) with a scale-in,
+ * Shows "+1" (green), "-1" (red), or "1 + clock icon" (yellow) with a scale-in,
  * upward-slide, and fade-out animation.
  *
  * The popup auto-dismisses after [DURATION_MS] milliseconds.
@@ -44,23 +50,28 @@ fun ScorePopup(
     // Track visibility state manually to control the show duration
     var isVisible by remember { mutableStateOf(false) }
     var currentPoints by remember { mutableStateOf(0) }
+    var currentTimeBonus by remember { mutableStateOf(0f) }
 
     LaunchedEffect(effect) {
         if (effect != null) {
             currentPoints = effect.points
+            currentTimeBonus = effect.timeBonus
             isVisible = true
             delay(1000L)
             isVisible = false
         }
     }
 
+    val isTimeBonus = currentTimeBonus > 0f
+
     val text = when {
+        isTimeBonus -> "${currentPoints}"
         currentPoints > 0 -> "+${currentPoints}"
         else -> "$currentPoints"
     }
 
     val textColor = when {
-        currentPoints >= 3 -> Color(0xFFFFEB3B) // Yellow/gold
+        isTimeBonus -> Color(0xFFFFEB3B) // Yellow/gold
         currentPoints > 0 -> Color(0xFF4CAF50)  // Green
         else -> Color(0xFFF44336)                // Red
     }
@@ -77,13 +88,34 @@ fun ScorePopup(
             ),
             exit = fadeOut(animationSpec = tween(durationMillis = 500)),
         ) {
-            Text(
-                text = text,
-                style = MaterialTheme.typography.displayMedium,
-                fontWeight = FontWeight.Black,
-                color = textColor,
-                textAlign = TextAlign.Center,
-            )
+            if (isTimeBonus) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = text,
+                        style = MaterialTheme.typography.displayMedium,
+                        fontWeight = FontWeight.Black,
+                        color = textColor,
+                        textAlign = TextAlign.Center,
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Icon(
+                        imageVector = Icons.Filled.Timer,
+                        contentDescription = "Time bonus",
+                        tint = textColor,
+                        modifier = Modifier.size(48.dp),
+                    )
+                }
+            } else {
+                Text(
+                    text = text,
+                    style = MaterialTheme.typography.displayMedium,
+                    fontWeight = FontWeight.Black,
+                    color = textColor,
+                    textAlign = TextAlign.Center,
+                )
+            }
         }
     }
 }

@@ -165,7 +165,9 @@ fun GameScreen(
         // ── Score popup overlay ────────────────────────────────────────────
         ScorePopup(
             effect = currentScoreEffect,
-            modifier = Modifier.align(Alignment.Center),
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(top = 120.dp),
         )
     }
 }

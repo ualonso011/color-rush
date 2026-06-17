@@ -5,7 +5,8 @@ import com.gentleai.colorrush.domain.engine.GameEngine.Companion.INITIAL_TIME
 import com.gentleai.colorrush.domain.engine.GameEngine.Companion.MAX_TIME
 import com.gentleai.colorrush.domain.engine.GameEngine.Companion.TICK_INTERVAL_MS
 import com.gentleai.colorrush.domain.engine.GameEngine.Companion.TICK_TIME_DECREMENT
-import com.gentleai.colorrush.domain.engine.GameEngine.Companion.YELLOW_TIME_BONUS
+import com.gentleai.colorrush.domain.engine.GameEngine.Companion.YELLOW_TIME_BONUS_MIN
+import com.gentleai.colorrush.domain.engine.GameEngine.Companion.YELLOW_TIME_BONUS_MAX
 import com.gentleai.colorrush.domain.model.CellColor
 import com.gentleai.colorrush.domain.model.CellState
 import com.gentleai.colorrush.domain.model.GamePhase
@@ -184,7 +185,10 @@ class GameEngineTest {
             engine.setCellColor(0, CellColor.YELLOW)
             val result = engine.tapCell(0)
             assertEquals(3, engine.state.value.score)
-            assertEquals(TapResult.Scored(3, YELLOW_TIME_BONUS), result)
+            assertInstanceOf(TapResult.Scored::class.java, result)
+            val scored = result as TapResult.Scored
+            assertEquals(3, scored.points)
+            assertTrue(scored.timeBonus in YELLOW_TIME_BONUS_MIN..YELLOW_TIME_BONUS_MAX)
         }
 
         @Test
@@ -194,7 +198,8 @@ class GameEngineTest {
             val initialTime = engine.state.value.timeRemaining
             engine.setCellColor(0, CellColor.YELLOW)
             engine.tapCell(0)
-            assertEquals(initialTime + YELLOW_TIME_BONUS, engine.state.value.timeRemaining)
+            val timeAdded = engine.state.value.timeRemaining - initialTime
+            assertTrue(timeAdded in YELLOW_TIME_BONUS_MIN..YELLOW_TIME_BONUS_MAX)
         }
 
         @Test

@@ -8,12 +8,12 @@ import javax.inject.Singleton
 /**
  * Weighted random color spawner for the game grid.
  *
- * Default probabilities: Green 45%, Red 35%, Yellow 20%.
+ * Default probabilities: Green 50%, Red 40%, Yellow 10%.
  * All probabilities are injectable for testability.
  *
- * @param greenProbability  Probability of spawning [CellColor.GREEN]   (default 0.45).
- * @param redProbability    Probability of spawning [CellColor.RED]     (default 0.35).
- * @param yellowProbability Probability of spawning [CellColor.YELLOW] (default 0.20).
+ * @param greenProbability  Probability of spawning [CellColor.GREEN]   (default 0.50).
+ * @param redProbability    Probability of spawning [CellColor.RED]     (default 0.40).
+ * @param yellowProbability Probability of spawning [CellColor.YELLOW] (default 0.10).
  */
 @Singleton
 class ColorSpawner @Inject constructor(
@@ -46,8 +46,8 @@ class ColorSpawner @Inject constructor(
     }
 
     companion object {
-        const val DEFAULT_GREEN_PROBABILITY = 0.45f
-        const val DEFAULT_RED_PROBABILITY = 0.35f
-        const val DEFAULT_YELLOW_PROBABILITY = 0.20f
+        const val DEFAULT_GREEN_PROBABILITY = 0.50f
+        const val DEFAULT_RED_PROBABILITY = 0.40f
+        const val DEFAULT_YELLOW_PROBABILITY = 0.10f
     }
 }

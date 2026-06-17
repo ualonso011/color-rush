@@ -55,21 +55,22 @@ class GameEngine(
         const val RED_POINTS = -1
         const val YELLOW_POINTS = 3
 
-        /** Extra seconds awarded for tapping a YELLOW cell. */
-        const val YELLOW_TIME_BONUS = 3f
+        /** Extra seconds awarded for tapping a YELLOW cell (random 1-3). */
+        const val YELLOW_TIME_BONUS_MIN = 1f
+        const val YELLOW_TIME_BONUS_MAX = 3f
 
         // Color spawning mechanics
         /** Maximum number of active colors at any time. */
         const val MAX_ACTIVE_COLORS = 3
 
         /** Minimum lifetime for a color in milliseconds. */
-        const val MIN_LIFETIME_MS = 1500L
+        const val MIN_LIFETIME_MS = 800L
 
         /** Maximum lifetime for a color in milliseconds. */
-        const val MAX_LIFETIME_MS = 3500L
+        const val MAX_LIFETIME_MS = 2000L
 
         /** Probability of spawning a new color per tick (when under max). */
-        const val SPAWN_PROBABILITY = 0.08f // ~8% per tick = ~1 spawn every 1.2 seconds
+        const val SPAWN_PROBABILITY = 0.15f // ~15% per tick = ~1 spawn every 0.7 seconds
     }
 
     // ── Reactive state ────────────────────────────────────────────────────
@@ -120,7 +121,9 @@ class GameEngine(
             CellColor.YELLOW -> YELLOW_POINTS
             CellColor.GRAY -> 0 // handled above, keeps the when exhaustive
         }
-        val timeBonus = if (cell.color == CellColor.YELLOW) YELLOW_TIME_BONUS else 0f
+        val timeBonus = if (cell.color == CellColor.YELLOW) {
+            random.nextFloat() * (YELLOW_TIME_BONUS_MAX - YELLOW_TIME_BONUS_MIN) + YELLOW_TIME_BONUS_MIN
+        } else 0f
 
         val newScore = maxOf(0, current.score + points)
         val newTime = minOf(MAX_TIME, current.timeRemaining + timeBonus)
