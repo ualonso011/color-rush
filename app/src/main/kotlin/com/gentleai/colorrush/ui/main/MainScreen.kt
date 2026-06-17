@@ -118,7 +118,7 @@ fun MainScreen(
             .padding(horizontal = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(48.dp))
 
         // ── Language selector ─────────────────────────────────────────────
         LanguageSelector(
@@ -153,7 +153,9 @@ fun MainScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "TAP THE COLOR • BEAT THE CLOCK",
+            text = androidx.compose.ui.res.stringResource(
+                com.gentleai.colorrush.R.string.tap_color_beat_clock
+            ),
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             letterSpacing = 3.sp,

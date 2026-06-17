@@ -17,4 +17,7 @@
     <string name="main_menu">Menú Principal</string>
     <string name="game_placeholder">¡El juego llegará pronto!</string>
     <string name="game_score">Puntuación: %d</string>
+    <string name="tap_color_beat_clock">Toca el color • Vence al reloj</string>
+    <string name="final_score_label">Puntuación Final</string>
+    <string name="score_label">PUNTUACIÓN</string>
 </resources>

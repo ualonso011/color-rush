@@ -17,4 +17,7 @@
     <string name="main_menu">Menu Nagusia</string>
     <string name="game_placeholder">Jokoa laster iritsiko da!</string>
     <string name="game_score">Puntuazioa: %d</string>
+    <string name="tap_color_beat_clock">Kolpea kolorea • Gainbitu erlojua</string>
+    <string name="final_score_label">Azken Puntuazioa</string>
+    <string name="score_label">PUNTUAZIOA</string>
 </resources>

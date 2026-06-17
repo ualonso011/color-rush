@@ -144,7 +144,9 @@ fun GameScreen(
 
             // ── Score display (prominent neon style) ──────────────────────
             Text(
-                text = "SCORE",
+                text = androidx.compose.ui.res.stringResource(
+                    com.gentleai.colorrush.R.string.score_label
+                ),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 letterSpacing = 4.sp,
@@ -202,8 +204,8 @@ fun GameScreen(
         ScorePopup(
             effect = currentScoreEffect,
             modifier = Modifier
-                .align(Alignment.Center)
-                .padding(bottom = 80.dp),
+                .align(Alignment.TopCenter)
+                .padding(top = 180.dp),
         )
     }
 }

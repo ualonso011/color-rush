@@ -179,7 +179,9 @@ fun GameOverScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
-                    text = "FINAL SCORE",
+                    text = androidx.compose.ui.res.stringResource(
+                        com.gentleai.colorrush.R.string.final_score_label
+                    ),
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     letterSpacing = 3.sp,
@@ -224,17 +226,7 @@ fun GameOverScreen(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 },
-                placeholder = {
-                    Text(
-                        text = "ARCADE",
-                        style = MaterialTheme.typography.headlineSmall.copy(
-                            fontFamily = FontFamily.Monospace,
-                            fontWeight = FontWeight.Bold,
-                            letterSpacing = 4.sp,
-                        ),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
-                    )
-                },
+                placeholder = { Text("") },
                 singleLine = true,
                 maxLines = 1,
                 enabled = !state.isSaved,
