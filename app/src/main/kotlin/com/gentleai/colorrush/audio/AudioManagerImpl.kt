@@ -2,8 +2,10 @@ package com.gentleai.colorrush.audio
 
 import android.content.Context
 import android.media.AudioAttributes
+import android.media.AudioFocusRequest
 import android.media.MediaPlayer
 import android.media.SoundPool
+import android.os.Build
 import android.util.Log
 import com.gentleai.colorrush.R
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -35,6 +37,10 @@ class AudioManagerImpl @Inject constructor(
         private const val MAX_STREAMS = 4
     }
 
+    /** System audio manager for focus requests. */
+    private val systemAudioManager: android.media.AudioManager =
+        context.getSystemService(Context.AUDIO_SERVICE) as android.media.AudioManager
+
     /** Background music player — null until first successful load. */
     private var mediaPlayer: MediaPlayer? = null
 
@@ -48,6 +54,9 @@ class AudioManagerImpl @Inject constructor(
     @Volatile
     private var enabled = true
 
+    /** Tracks whether we currently hold audio focus for BGM. */
+    private var hasAudioFocus = false
+
     // ── Initialization ──────────────────────────────────────────────────────
 
     init {
@@ -57,6 +66,7 @@ class AudioManagerImpl @Inject constructor(
         } catch (e: Exception) {
             Log.w(TAG, "Audio initialization failed — audio will be unavailable", e)
         }
+        Log.d(TAG, "Init complete — mediaPlayer=${mediaPlayer != null}, soundPool=${soundPool != null}, sfxLoaded=${sfxIds.size}")
     }
 
     private fun initializeSoundPool() {
@@ -89,14 +99,61 @@ class AudioManagerImpl @Inject constructor(
 
     private fun initializeMediaPlayer() {
         mediaPlayer = try {
-            MediaPlayer.create(context, R.raw.bgm_arcade)?.apply {
-                isLooping = true
-                setVolume(BGM_VOLUME, BGM_VOLUME)
+            val mp = MediaPlayer.create(context, R.raw.bgm_arcade)
+            if (mp == null) {
+                Log.w(TAG, "MediaPlayer.create returned null — BGM resource may be missing or corrupt")
+                null
+            } else {
+                mp.isLooping = true
+                mp.setVolume(BGM_VOLUME, BGM_VOLUME)
+                mp
             }
         } catch (e: Exception) {
             Log.w(TAG, "Failed to create background music player", e)
             null
         }
+    }
+
+    // ── Audio focus ─────────────────────────────────────────────────────────
+
+    /** Requests audio focus for music/game playback. */
+    private fun requestAudioFocus(): Boolean {
+        if (hasAudioFocus) return true
+        val result = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val focusRequest = AudioFocusRequest.Builder(android.media.AudioManager.AUDIOFOCUS_GAIN)
+                .setUsage(AudioAttributes.USAGE_GAME)
+                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                .build()
+            systemAudioManager.requestAudioFocus(focusRequest)
+        } else {
+            @Suppress("DEPRECATION")
+            systemAudioManager.requestAudioFocus(
+                null,
+                android.media.AudioManager.STREAM_MUSIC,
+                android.media.AudioManager.AUDIOFOCUS_GAIN,
+            )
+        }
+        hasAudioFocus = result == android.media.AudioManager.AUDIOFOCUS_REQUEST_GRANTED
+        if (!hasAudioFocus) {
+            Log.w(TAG, "Audio focus request denied")
+        }
+        return hasAudioFocus
+    }
+
+    /** Abandons audio focus when pausing/stopping. */
+    private fun abandonAudioFocus() {
+        if (!hasAudioFocus) return
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val focusRequest = AudioFocusRequest.Builder(android.media.AudioManager.AUDIOFOCUS_GAIN)
+                .setUsage(AudioAttributes.USAGE_GAME)
+                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                .build()
+            systemAudioManager.abandonAudioFocusRequest(focusRequest)
+        } else {
+            @Suppress("DEPRECATION")
+            systemAudioManager.abandonAudioFocus(null)
+        }
+        hasAudioFocus = false
     }
 
     // ── BGM controls ────────────────────────────────────────────────────────
@@ -105,8 +162,10 @@ class AudioManagerImpl @Inject constructor(
         if (!enabled) return
         val mp = mediaPlayer ?: return
         if (!mp.isPlaying) {
+            if (!requestAudioFocus()) return
             try {
                 mp.start()
+                Log.d(TAG, "BGM started")
             } catch (e: Exception) {
                 Log.w(TAG, "Failed to start BGM", e)
             }
@@ -124,6 +183,7 @@ class AudioManagerImpl @Inject constructor(
         } catch (e: Exception) {
             Log.w(TAG, "Failed to stop BGM", e)
         }
+        abandonAudioFocus()
     }
 
     override fun pauseBgm() {
@@ -134,13 +194,18 @@ class AudioManagerImpl @Inject constructor(
         } catch (e: Exception) {
             Log.w(TAG, "Failed to pause BGM", e)
         }
+        abandonAudioFocus()
     }
 
     override fun resumeBgm() {
         if (!enabled) return
         try {
             mediaPlayer?.apply {
-                if (!isPlaying) start()
+                if (!isPlaying) {
+                    if (!requestAudioFocus()) return
+                    start()
+                    Log.d(TAG, "BGM resumed")
+                }
             }
         } catch (e: Exception) {
             Log.w(TAG, "Failed to resume BGM", e)
@@ -174,10 +239,12 @@ class AudioManagerImpl @Inject constructor(
         this.enabled = enabled
         if (!enabled) {
             stopBgm()
+            abandonAudioFocus()
         }
     }
 
     override fun release() {
+        abandonAudioFocus()
         try {
             mediaPlayer?.release()
             soundPool?.release()
