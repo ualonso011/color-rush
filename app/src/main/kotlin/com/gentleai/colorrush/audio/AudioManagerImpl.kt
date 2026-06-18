@@ -120,9 +120,12 @@ class AudioManagerImpl @Inject constructor(
     private fun requestAudioFocus(): Boolean {
         if (hasAudioFocus) return true
         val result = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val focusRequest = AudioFocusRequest.Builder(android.media.AudioManager.AUDIOFOCUS_GAIN)
+            val audioAttrs = AudioAttributes.Builder()
                 .setUsage(AudioAttributes.USAGE_GAME)
                 .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                .build()
+            val focusRequest = AudioFocusRequest.Builder(android.media.AudioManager.AUDIOFOCUS_GAIN)
+                .setAudioAttributes(audioAttrs)
                 .build()
             systemAudioManager.requestAudioFocus(focusRequest)
         } else {
@@ -144,9 +147,12 @@ class AudioManagerImpl @Inject constructor(
     private fun abandonAudioFocus() {
         if (!hasAudioFocus) return
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val focusRequest = AudioFocusRequest.Builder(android.media.AudioManager.AUDIOFOCUS_GAIN)
+            val audioAttrs = AudioAttributes.Builder()
                 .setUsage(AudioAttributes.USAGE_GAME)
                 .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                .build()
+            val focusRequest = AudioFocusRequest.Builder(android.media.AudioManager.AUDIOFOCUS_GAIN)
+                .setAudioAttributes(audioAttrs)
                 .build()
             systemAudioManager.abandonAudioFocusRequest(focusRequest)
         } else {
