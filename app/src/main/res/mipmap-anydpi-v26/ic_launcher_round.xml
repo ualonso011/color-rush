@@ -2,5 +2,5 @@
 <!-- Round adaptive icon definition for ColorRush launcher icon (API 26+). -->
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
     <background android:drawable="@android:color/black" />
-    <foreground android:drawable="@drawable/launcher_icon" />
+    <foreground android:drawable="@drawable/colorrush_rounded" />
 </adaptive-icon>
