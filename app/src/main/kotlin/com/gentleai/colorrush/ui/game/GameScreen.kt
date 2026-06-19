@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -40,6 +43,9 @@ import com.gentleai.colorrush.domain.model.GamePhase
 import com.gentleai.colorrush.ui.game.components.ColorCell
 import com.gentleai.colorrush.ui.game.components.ScorePopup
 import com.gentleai.colorrush.ui.game.components.TimerBar
+import com.gentleai.colorrush.ui.theme.CellGreen
+import com.gentleai.colorrush.ui.theme.CellRed
+import com.gentleai.colorrush.ui.theme.CellYellow
 import com.gentleai.colorrush.ui.theme.NeonCyan
 import kotlinx.coroutines.delay
 
@@ -186,6 +192,11 @@ fun GameScreen(
                 enabled = state.phase == GamePhase.PLAYING,
             )
 
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // ── Color legend ──────────────────────────────────────────────
+            ColorLegend()
+
             Spacer(modifier = Modifier.weight(1f))
 
             // ── Phase indicator ───────────────────────────────────────────
@@ -212,6 +223,50 @@ fun GameScreen(
             gridWidth = gridWidth,
             gridTopOffset = gridTopOffset,
             modifier = Modifier.align(Alignment.TopStart),
+        )
+    }
+}
+
+/**
+ * Color legend explaining what each cell color does.
+ * Shows a row of small colored dots with their scoring effect.
+ */
+@Composable
+private fun ColorLegend() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(0.8f)
+            .background(
+                color = Color(0x0DFFFFFF),
+                shape = RoundedCornerShape(12.dp),
+            )
+            .padding(horizontal = 12.dp, vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        LegendItem(color = CellGreen, label = "+1")
+        LegendItem(color = CellRed, label = "-1")
+        LegendItem(color = CellYellow, label = "+3")
+    }
+}
+
+@Composable
+private fun LegendItem(color: Color, label: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        Box(
+            modifier = Modifier
+                .size(12.dp)
+                .clip(RoundedCornerShape(3.dp))
+                .background(color),
+        )
+        Text(
+            text = label,
+            color = Color(0xFF9A9AB0),
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Medium,
         )
     }
 }

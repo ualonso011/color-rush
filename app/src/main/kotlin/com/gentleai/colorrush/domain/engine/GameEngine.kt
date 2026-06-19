@@ -64,13 +64,13 @@ class GameEngine(
         const val MAX_ACTIVE_COLORS = 4
 
         /** Minimum lifetime for a color in milliseconds. */
-        const val MIN_LIFETIME_MS = 600L
+        const val MIN_LIFETIME_MS = 300L
 
         /** Maximum lifetime for a color in milliseconds. */
-        const val MAX_LIFETIME_MS = 1500L
+        const val MAX_LIFETIME_MS = 800L
 
         /** Probability of spawning a new color per tick (when under max). */
-        const val SPAWN_PROBABILITY = 0.25f // ~25% per tick = ~1 spawn every 0.4 seconds
+        const val SPAWN_PROBABILITY = 0.4f // ~40% per tick = more frequent spawns
     }
 
     // ── Reactive state ────────────────────────────────────────────────────
@@ -103,7 +103,8 @@ class GameEngine(
      * - If the game is not in [GamePhase.PLAYING], returns [TapResult.Missed].
      * - If the cell is [CellColor.GRAY], returns [TapResult.Missed].
      * - Otherwise computes score delta and optional time bonus, updates state,
-     *   and returns the cell to GRAY (no immediate spawn).
+     *   returns the cell to GRAY, and immediately spawns a new color in a
+     *   random remaining gray cell.
      *
      * @param index Cell position (0..8, row-major order).
      * @throws IllegalArgumentException if [index] is out of bounds.
@@ -145,10 +146,13 @@ class GameEngine(
             if (cs.index == index) CellState(index, CellColor.GRAY) else cs
         }
 
+        // Spawn a new color immediately in a random gray cell
+        val finalGrid = spawnInGrayCell(newGrid)
+
         _state.value = current.copy(
             score = newScore,
             timeRemaining = newTime,
-            grid = newGrid,
+            grid = finalGrid,
             consecutiveRedTaps = newConsecutiveRedTaps,
         )
 
@@ -201,6 +205,25 @@ class GameEngine(
     // ── Internal ──────────────────────────────────────────────────────────
 
     /**
+     * Spawns a new color in a random gray cell, if one is available.
+     * Returns the updated grid (or the same grid if no gray cell exists).
+     */
+    private fun spawnInGrayCell(grid: List<CellState>): List<CellState> {
+        val grayCells = grid.filter { it.color == CellColor.GRAY }
+        if (grayCells.isEmpty()) return grid
+        val targetCell = grayCells[random.nextInt(grayCells.size)]
+        val newColor = colorSpawner.spawn()
+        val lifetime = random.nextLong(MIN_LIFETIME_MS, MAX_LIFETIME_MS + 1)
+        return grid.map { cell ->
+            if (cell.index == targetCell.index) {
+                CellState(cell.index, newColor, 0L, lifetime)
+            } else {
+                cell
+            }
+        }
+    }
+
+    /**
      * Processes a single tick:
      * 1. Decrements the countdown timer by [TICK_TIME_DECREMENT].
      * 2. Expires colors that exceeded their lifetime.
@@ -234,24 +257,11 @@ class GameEngine(
 
             // 3. Spawn new colors if under max
             val activeCount = grid.count { it.color != CellColor.GRAY }
-            // Always spawn if no colors active, otherwise use probability
-            val shouldSpawn = activeCount == 0 || 
+            val shouldSpawn = activeCount == 0 ||
                 (activeCount < MAX_ACTIVE_COLORS && random.nextFloat() < SPAWN_PROBABILITY)
-            
+
             if (shouldSpawn) {
-                val grayCells = grid.filter { it.color == CellColor.GRAY }
-                if (grayCells.isNotEmpty()) {
-                    val targetCell = grayCells[random.nextInt(grayCells.size)]
-                    val newColor = colorSpawner.spawn()
-                    val lifetime = random.nextLong(MIN_LIFETIME_MS, MAX_LIFETIME_MS + 1)
-                    grid = grid.map { cell ->
-                        if (cell.index == targetCell.index) {
-                            CellState(cell.index, newColor, 0L, lifetime)
-                        } else {
-                            cell
-                        }
-                    }
-                }
+                grid = spawnInGrayCell(grid)
             }
 
             current.copy(timeRemaining = newTime, grid = grid)
