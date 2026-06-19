@@ -64,10 +64,10 @@ class GameEngine(
         const val MAX_ACTIVE_COLORS = 4
 
         /** Minimum lifetime for a color in milliseconds. */
-        const val MIN_LIFETIME_MS = 300L
+        const val MIN_LIFETIME_MS = 400L
 
         /** Maximum lifetime for a color in milliseconds. */
-        const val MAX_LIFETIME_MS = 800L
+        const val MAX_LIFETIME_MS = 1000L
 
         /** Probability of spawning a new color per tick (when under max). */
         const val SPAWN_PROBABILITY = 0.4f // ~40% per tick = more frequent spawns

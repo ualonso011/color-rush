@@ -132,39 +132,30 @@ fun MainScreen(
         Spacer(modifier = Modifier.weight(0.5f))
 
         // ── Title "COLORRUSH" with neon glow ──────────────────────────────
-        // Build annotated string with larger C and first R
+        // Build annotated string with larger C and first R (used for both layers)
         val titleText = buildAnnotatedString {
-            // C - larger
             withStyle(SpanStyle(fontSize = 68.sp)) { append("C") }
-            append("OLOR")
-            // First R - larger
+            withStyle(SpanStyle(fontSize = 48.sp)) { append("OLOR") }
             withStyle(SpanStyle(fontSize = 68.sp)) { append("R") }
-            append("USH")
+            withStyle(SpanStyle(fontSize = 48.sp)) { append("USH") }
         }
-
-        val glowText = buildAnnotatedString {
-            withStyle(SpanStyle(fontSize = 68.sp)) { append("C") }
-            append("OLOR")
-            withStyle(SpanStyle(fontSize = 68.sp)) { append("R") }
-            append("USH")
-        }
+        val titleLetterSpacing = 8.sp
 
         Box(contentAlignment = Alignment.Center) {
-            // Glow layer - larger and more visible
+            // Glow/shadow layer — identical metrics to foreground
             Text(
-                text = glowText,
+                text = titleText,
                 fontWeight = FontWeight.Black,
                 color = NeonCyan.copy(alpha = titleGlowAlpha * 0.4f),
-                letterSpacing = 10.sp,
+                letterSpacing = titleLetterSpacing,
                 textAlign = TextAlign.Center,
             )
             // Foreground
             Text(
                 text = titleText,
-                style = MaterialTheme.typography.displayLarge,
                 fontWeight = FontWeight.Black,
                 color = NeonCyan,
-                letterSpacing = 6.sp,
+                letterSpacing = titleLetterSpacing,
                 textAlign = TextAlign.Center,
             )
         }

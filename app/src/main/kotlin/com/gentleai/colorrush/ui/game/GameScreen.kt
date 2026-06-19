@@ -245,8 +245,8 @@ private fun ColorLegend() {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         LegendItem(color = CellGreen, label = "+1")
-        LegendItem(color = CellRed, label = "-1")
-        LegendItem(color = CellYellow, label = "+3")
+        LegendItem(color = CellRed, label = "-1 ⬆")
+        LegendItem(color = CellYellow, label = "+3s (2-5)")
     }
 }
 
@@ -265,7 +265,7 @@ private fun LegendItem(color: Color, label: String) {
         Text(
             text = label,
             color = Color(0xFF9A9AB0),
-            fontSize = 12.sp,
+            fontSize = 11.sp,
             fontWeight = FontWeight.Medium,
         )
     }
