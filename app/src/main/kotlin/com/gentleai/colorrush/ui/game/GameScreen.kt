@@ -246,7 +246,7 @@ private fun ColorLegend() {
     ) {
         LegendItem(color = CellGreen, label = "+1")
         LegendItem(color = CellRed, label = "-1 ⬆")
-        LegendItem(color = CellYellow, label = "+3s (2-5)")
+        LegendItem(color = CellYellow, label = "+(2-5)s")
     }
 }
 
